@@ -13,7 +13,10 @@ export function SiteFooter() {
     <footer className="border-t border-brand-primary/10 bg-brand-cream pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:gap-12">
-          <Link href="/" className="inline-block shrink-0 self-start">
+          <Link
+            href="/"
+            className="inline-block shrink-0 self-center md:self-start"
+          >
             <BrandLogo
               variant="footer"
               heightClass="h-24 min-h-24 sm:h-28 sm:min-h-28"
