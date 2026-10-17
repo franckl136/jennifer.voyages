@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Bleu du logo J&V */
+  --brand-primary: #1a2b88;
+  --brand-cream: #e8e4dc;
+  --background: #f5f3ef;
+  --foreground: #1a2a3d;
+  --muted: #5c6570;
+  --card: #ffffff;
+  --border: #ddd8cf;
+  --accent-sky: #6b93b5;
+  --accent-coral: #d4a08f;
+  --accent-mint: #8fb89e;
+  --accent-lilac: #b8a8cf;
+  --pastel-blush: #f5e8e6;
+  --pastel-mist: #e4edf4;
+  --pastel-sage: #e4ebe6;
+  --pastel-sand: #ebe6dc;
 }
 
 @theme inline {
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-cream: var(--brand-cream);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-accent-sky: var(--accent-sky);
+  --color-accent-coral: var(--accent-coral);
+  --color-accent-mint: var(--accent-mint);
+  --color-accent-lilac: var(--accent-lilac);
+  --color-pastel-blush: var(--pastel-blush);
+  --color-pastel-mist: var(--pastel-mist);
+  --color-pastel-sage: var(--pastel-sage);
+  --color-pastel-sand: var(--pastel-sand);
+  --font-sans: var(--font-montserrat), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.25rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
 }
