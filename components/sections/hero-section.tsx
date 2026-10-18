@@ -6,7 +6,7 @@ export function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-pastel-mist/40 via-background to-pastel-sand/30">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(142,189,212,0.22),transparent)]" />
-      <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 pb-14 pt-8 sm:gap-10 sm:px-6 sm:pb-20 sm:pt-14 lg:pt-20 lg:pb-24">
+      <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 pb-10 pt-6 sm:gap-8 sm:px-6 sm:pb-14 sm:pt-10 lg:pt-12 lg:pb-16">
         <div className="mx-auto flex max-w-2xl flex-col items-center space-y-6 text-center sm:space-y-8">
           <p className="inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-medium text-muted shadow-sm backdrop-blur-sm">
             <Sparkles className="h-3.5 w-3.5 shrink-0 text-accent-coral" aria-hidden />

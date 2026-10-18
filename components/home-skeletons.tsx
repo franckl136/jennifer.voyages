@@ -4,7 +4,7 @@ export function BlogSectionSkeleton() {
   return (
     <section
       id="blog"
-      className="bg-gradient-to-b from-pastel-sand/40 to-background py-20 sm:py-24"
+      className="bg-gradient-to-b from-pastel-sand/40 to-background py-10 sm:py-14 lg:py-16"
       aria-busy="true"
       aria-label="Chargement du blog"
     >
@@ -39,7 +39,7 @@ export function ContactSectionSkeleton() {
   return (
     <section
       id="contact"
-      className="border-t border-border bg-pastel-mist/25 py-20 sm:py-24"
+      className="border-t border-border bg-pastel-mist/25 py-10 sm:py-14 lg:py-16"
       aria-busy="true"
       aria-label="Chargement du contact"
     >

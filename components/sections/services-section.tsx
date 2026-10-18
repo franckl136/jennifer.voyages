@@ -28,7 +28,7 @@ export function ServicesSection() {
   return (
     <section
       id="services"
-      className="scroll-mt-24 border-t border-border bg-card py-14 sm:py-20 lg:py-24"
+      className="border-t border-border bg-card py-10 sm:py-14 lg:py-16"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">

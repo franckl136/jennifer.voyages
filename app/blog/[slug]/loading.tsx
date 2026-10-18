@@ -1,7 +1,7 @@
 export default function BlogArticleLoading() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 h-5 w-40 animate-pulse rounded bg-pastel-mist" />
         <div className="mb-8 aspect-[21/9] w-full animate-pulse rounded-2xl bg-pastel-mist sm:aspect-[2/1]" />
         <div className="mb-3 h-4 w-32 animate-pulse rounded bg-pastel-mist" />

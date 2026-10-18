@@ -25,7 +25,10 @@ export async function generateStaticParams() {
   }
 }
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ from?: string }>;
+};
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -50,8 +53,12 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function BlogArticlePage({ params }: Props) {
+export default async function BlogArticlePage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { from } = await searchParams;
+  const backHref = from === "accueil" ? "/#blog" : "/blog";
+  const backLabel =
+    from === "accueil" ? "Retour à l'accueil" : "Retour au blog";
 
   if (!isNotionConfigured()) {
     notFound();
@@ -78,13 +85,13 @@ export default async function BlogArticlePage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <Link
-          href="/#blog"
+          href={backHref}
           className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden />
-          Retour au blog
+          {backLabel}
         </Link>
 
         <header className="border-b border-border pb-10">

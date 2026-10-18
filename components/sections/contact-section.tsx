@@ -62,7 +62,7 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      className="scroll-mt-24 border-t border-border bg-pastel-mist/25 py-14 sm:py-20 lg:py-24"
+      className="border-t border-border bg-pastel-mist/25 py-10 sm:py-14 lg:py-16"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
@@ -208,7 +208,7 @@ export function ContactSection() {
                 J&apos;accepte que mes données soient traitées conformément à la{" "}
               </label>
               <Link
-                href="/mentions-legales"
+                href="/mentions-legales#confidentialite"
                 className="font-medium text-brand-primary underline underline-offset-2 hover:opacity-90"
               >
                 politique de confidentialité
