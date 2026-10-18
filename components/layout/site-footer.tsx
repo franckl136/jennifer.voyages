@@ -12,23 +12,19 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-brand-primary/10 bg-brand-cream pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-        <div className="flex flex-col gap-8 md:flex-row md:items-center md:gap-12">
-          <Link
-            href="/"
-            className="inline-block shrink-0 self-center md:self-start"
-          >
+        <div className="grid grid-cols-1 items-center gap-10 text-center md:grid-cols-3 md:gap-0">
+          <Link href="/" className="inline-block justify-self-center">
             <BrandLogo
               variant="footer"
               heightClass="h-24 min-h-24 sm:h-28 sm:min-h-28"
             />
           </Link>
 
-          <div className="grid flex-1 grid-cols-1 gap-8 text-center sm:grid-cols-3 sm:gap-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
               Navigation
             </p>
-            <ul className="mt-3 space-y-1 text-sm">
+            <ul className="mt-3 flex flex-col items-center space-y-1 text-sm">
               <li>
                 <Link
                   href="/#services"
@@ -55,21 +51,7 @@ export function SiteFooter() {
               </li>
             </ul>
           </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
-              Légal
-            </p>
-            <ul className="mt-3 text-sm">
-              <li>
-                <Link
-                  href="/mentions-legales"
-                  className="inline-flex py-1.5 text-foreground/80 transition-colors hover:text-foreground"
-                >
-                  Mentions légales
-                </Link>
-              </li>
-            </ul>
-          </div>
+
           <div className="flex flex-col items-center">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
               Contact
@@ -86,7 +68,6 @@ export function SiteFooter() {
               <FooterShareButton />
             </div>
           </div>
-        </div>
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-2 border-t border-border/80 pt-5 text-center text-xs text-muted sm:flex-row sm:gap-3">
