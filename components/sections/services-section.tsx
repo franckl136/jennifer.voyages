@@ -4,21 +4,21 @@ const services = [
   {
     title: "Conception d’itinéraires",
     description:
-      "Jours équilibrés, temps de trajet réalistes et idées d’activités selon votre façon de voyager : ville, route ou voyage au ralenti.",
+      "On compose les journées à votre rythme : le temps de profiter, des trajets réalistes, et des idées selon que vous aimiez la ville, la route ou les journées plus calmes.",
     icon: MapPinned,
     tint: "bg-pastel-mist text-accent-sky",
   },
   {
     title: "Réservation & logistique",
     description:
-      "Repérage d’hébergements et options de transport, points d’attention (horaires, transferts) pour que vous arriviez sereinement sur place.",
+      "Je cherche les hébergements et les transports qui vous conviennent, et je veille aux horaires comme aux correspondances, pour une arrivée en douceur.",
     icon: Ticket,
     tint: "bg-pastel-blush text-accent-coral",
   },
   {
     title: "Conseils personnalisés",
     description:
-      "Bonnes adresses, saisonnalité, faux bons plans à éviter et astuces pratiques pour profiter sans vous prendre la tête.",
+      "Quelques adresses choisies, ce qu’il vaut mieux laisser de côté, et de petites astuces pour savourer le voyage sans courir d’un lieu à l’autre.",
     icon: BookOpen,
     tint: "bg-pastel-sage text-accent-mint",
   },
@@ -39,8 +39,9 @@ export function ServicesSection() {
             Trois façons de vous décharger de la préparation
           </h2>
           <p className="mt-4 text-base text-muted sm:text-lg">
-            Chaque accompagnement est adapté à votre projet : vous gardez la
-            main, je structure et sécurise les choix.
+            Dites-moi où vous avez envie d’aller, et à quel rythme. Je prépare
+            avec vous l’itinéraire, les adresses et les réservations, pour un
+            voyage qui vous ressemble.
           </p>
         </div>
 
