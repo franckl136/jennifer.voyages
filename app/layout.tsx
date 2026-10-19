@@ -25,7 +25,7 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Jennifer & Voyages — Itinéraires, réservations & conseils",
+    default: "Jennifer & Voyages",
     template: "%s | Jennifer & Voyages",
   },
   description:
