@@ -56,7 +56,11 @@ body {
 }
 
 .contact-dialog {
+  position: fixed;
+  inset: 0;
   margin: auto;
+  height: fit-content;
+  max-height: min(calc(100dvh - 2.5rem), 100%);
   color: var(--foreground);
 }
 

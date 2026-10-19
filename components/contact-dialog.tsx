@@ -260,7 +260,7 @@ export function ContactDialog() {
       <dialog
         ref={dialogRef}
         aria-labelledby={titleId}
-        className="contact-dialog w-[min(calc(100%-1.75rem),36rem)] max-h-[min(calc(100dvh-2.5rem),100%)] overflow-y-auto rounded-2xl border border-border bg-card p-0 text-foreground shadow-2xl"
+        className="contact-dialog w-[min(calc(100%-1.75rem),36rem)] overflow-y-auto rounded-2xl border border-border bg-card p-0 text-foreground shadow-2xl"
         onClose={() => {
           setPrivacyOpen(false);
           setOpen(false);
