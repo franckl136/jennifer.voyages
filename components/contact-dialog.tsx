@@ -2,6 +2,7 @@
 
 import { SITE, whatsappHref } from "@/lib/site";
 import { ArrowLeft, MessageCircle, Minus, Phone, Send, X } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   type FormEvent,
@@ -29,7 +30,7 @@ type ContactLinkProps = {
 /** Ouvre la fenêtre de contact sans quitter la page. */
 export function ContactLink({ className, children, onClick }: ContactLinkProps) {
   return (
-    <a
+    <Link
       href="/#contact"
       className={className}
       onClick={(e) => {
@@ -39,7 +40,7 @@ export function ContactLink({ className, children, onClick }: ContactLinkProps) 
       }}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
