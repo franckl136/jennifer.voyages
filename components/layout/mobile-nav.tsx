@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useId, useState } from "react";
 
 const nav = [
-  { href: "/#a-propos", label: "Qui je suis" },
+  { href: "/#a-propos", label: "Qui suis-je ?" },
   { href: "/#services", label: "Mes services" },
   { href: "/#blog", label: "Carnets" },
 ];

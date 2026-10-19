@@ -4,7 +4,7 @@ import { ContactLink } from "@/components/contact-dialog";
 import { MobileNav } from "@/components/layout/mobile-nav";
 
 const nav = [
-  { href: "/#a-propos", label: "Qui je suis" },
+  { href: "/#a-propos", label: "Qui suis-je ?" },
   { href: "/#services", label: "Mes services" },
   { href: "/#blog", label: "Carnets" },
 ];

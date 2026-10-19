@@ -34,7 +34,7 @@ export function SiteFooter() {
             <ul className="mt-3 flex flex-col items-center gap-0.5 text-sm">
               <li>
                 <Link href="/#a-propos" className={footerNavClass}>
-                  Qui je suis
+                  Qui suis-je ?
                 </Link>
               </li>
               <li>

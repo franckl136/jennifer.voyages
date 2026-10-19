@@ -5,24 +5,24 @@ import { Plus } from "lucide-react";
 
 const faqs = [
   {
+    question: "Comment se déroule une réservation avec vous ?",
+    answer:
+      "Dès votre première prise de contact, je prends en charge votre demande. À votre écoute, je construis avec vous un voyage entièrement personnalisé, en tenant compte de vos envies, de votre budget et de vos attentes. Une fois le devis validé, mon agence partenaire établit votre contrat de vente. Vous pourrez ensuite confirmer le règlement.",
+  },
+  {
+    question: "Comment se passe le règlement du séjour ?",
+    answer:
+      "Après validation de votre devis, le contrat vous est envoyé. Plusieurs possibilités s’offrent à vous : lien de paiement sécurisé, virement bancaire, espèces ou chèques-vacances (avec frais).",
+  },
+  {
+    question: "Puis-je souscrire une assurance voyage auprès de vous ?",
+    answer:
+      "Oui. Je propose deux formules : une assurance annulation pour couvrir les imprévus avant le départ, et une assurance multirisques pour voyager plus sereinement (assistance, bagages, interruption de séjour, etc.). Vous pouvez les souscrire directement lors de votre réservation.",
+  },
+  {
     question: "Sous quel délai répondez-vous ?",
     answer:
       "En général sous 48 heures ouvrées. Si je suis en déplacement ou déjà prise sur d’autres projets, je vous le dis rapidement pour convenir d’un autre moment.",
-  },
-  {
-    question: "Combien de temps faut-il pour préparer un voyage ?",
-    answer:
-      "Cela dépend de la destination, des dates et de ce que vous souhaitez. Un projet simple peut se préparer en quelques échanges. Un itinéraire plus détaillé demande souvent deux à trois semaines, parfois davantage en haute saison. On fixe un rythme réaliste dès le départ.",
-  },
-  {
-    question: "Comment abordez-vous le budget ?",
-    answer:
-      "On part de votre enveloppe et de vos priorités : hébergement, rythme, expériences… Je propose ensuite des options qui collent à ce que vous pouvez y consacrer, sans vous orienter vers quelque chose qui ne vous convient pas. Les frais de mon accompagnement sont annoncés clairement avant que l’on avance.",
-  },
-  {
-    question: "Le premier message m’engage-t-il ?",
-    answer:
-      "Non. Écrire sert d’abord à échanger sur votre projet et à voir si l’on peut travailler ensemble. Il n’y a engagement que lorsque l’on se met d’accord sur la suite et sur les conditions.",
   },
 ];
 

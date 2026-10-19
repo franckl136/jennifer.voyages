@@ -71,6 +71,8 @@ export function ContactDialog() {
   const closingRef = useRef(false);
   const privacyOpenRef = useRef(false);
   const sourceRef = useRef("lien-direct");
+  /** true seulement si le pointeur a commencé sur le fond (évite de fermer après une sélection de texte). */
+  const backdropPointerDownRef = useRef(false);
   const titleId = useId();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -280,8 +282,18 @@ export function ContactDialog() {
           }
           minimize();
         }}
+        onPointerDown={(e) => {
+          backdropPointerDownRef.current = e.target === dialogRef.current;
+        }}
         onClick={(e) => {
-          if (e.target === dialogRef.current) minimize();
+          // Ne réduire que si clic complet sur le fond (pas un glisser depuis un champ)
+          if (
+            backdropPointerDownRef.current &&
+            e.target === dialogRef.current
+          ) {
+            minimize();
+          }
+          backdropPointerDownRef.current = false;
         }}
       >
         <div className="relative px-4 py-5 sm:px-8 sm:py-8">
