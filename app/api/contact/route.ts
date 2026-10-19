@@ -49,6 +49,7 @@ export async function POST(request: Request) {
   const email = trimStr(body.email, MAX_LEN.email);
   const destination = trimStr(body.destination, MAX_LEN.destination);
   const message = trimStr(body.message, MAX_LEN.message);
+  const source = trimStr(body.source, 80) || "inconnu";
   const privacy = Boolean(body.privacy);
 
   if (!name || !email || !destination || !message || !privacy) {
@@ -89,6 +90,7 @@ export async function POST(request: Request) {
     `Nom : ${name}`,
     `Email : ${email}`,
     `Destination : ${destination}`,
+    `Provenance : ${source}`,
     "",
     "Message :",
     message,

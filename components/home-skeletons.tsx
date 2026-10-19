@@ -6,7 +6,7 @@ export function BlogSectionSkeleton() {
       id="blog"
       className="bg-gradient-to-b from-pastel-sand/40 to-background py-10 sm:py-14 lg:py-16"
       aria-busy="true"
-      aria-label="Chargement du blog"
+      aria-label="Chargement des inspirations"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl space-y-4 text-center">

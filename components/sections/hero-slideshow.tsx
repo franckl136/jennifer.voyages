@@ -79,7 +79,7 @@ export function HeroSlideshow() {
         const isCurrent = i === current;
         const isPrevious = i === previous && previous !== current;
         const shown = isCurrent ? phase !== "ready" : isPrevious;
-
+        // Première image + voisines proches : priorité LCP / preload limité
         return (
           <div
             key={item.src}
@@ -98,7 +98,7 @@ export function HeroSlideshow() {
               src={item.src}
               alt={isCurrent && phase !== "ready" ? item.alt : ""}
               fill
-              priority
+              priority={i === 0}
               sizes="(max-width: 768px) 100vw, 42rem"
               className="object-cover"
             />

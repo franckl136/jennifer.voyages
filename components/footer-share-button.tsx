@@ -14,7 +14,7 @@ const PLACEHOLDER_CLASS =
   "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/80 bg-white shadow-sm";
 
 const BUTTON_CLASS =
-  "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/80 bg-white p-0 text-muted shadow-sm transition-colors hover:text-foreground focus-visible:outline focus-visible:ring-2 focus-visible:ring-brand-primary/30";
+  "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border/80 bg-white p-0 text-muted shadow-sm transition-[background-color,border-color,color,box-shadow] hover:border-brand-primary/25 hover:bg-brand-primary/10 hover:text-brand-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40";
 
 /**
  * Partage natif (navigator.share) ou copie du lien + toast.
@@ -86,7 +86,7 @@ export function FooterShareButton() {
                 <>Lien copié dans le presse-papiers.</>
               ) : (
                 <>
-                  Impossible de copier automatiquement — sélectionnez l’adresse
+                  Impossible de copier automatiquement. Sélectionnez l’adresse
                   dans la barre du navigateur.
                 </>
               )}

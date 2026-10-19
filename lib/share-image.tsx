@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 export const shareImageSize = { width: 1200, height: 630 };
 export const shareImageAlt =
-  "Jennifer & Voyages — itinéraires, réservations et conseils";
+  "Jennifer & Voyages : itinéraires, réservations et conseils";
 
 export async function createShareImage() {
   const photo = await readFile(

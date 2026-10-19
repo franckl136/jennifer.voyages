@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/reveal";
 import { BookOpen, MapPinned, Ticket } from "lucide-react";
 
 const services = [
@@ -36,32 +37,32 @@ export function ServicesSection() {
             Mes services
           </p>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Trois façons de vous décharger de la préparation
+            Ce que je prends en charge
           </h2>
           <p className="mt-4 text-base text-muted sm:text-lg">
-            Dites-moi où vous avez envie d’aller, et à quel rythme. Je prépare
-            avec vous l’itinéraire, les adresses et les réservations, pour un
-            voyage qui vous ressemble.
+            L’itinéraire, la logistique et les bons conseils : pour que vous
+            gardiez l’envie, pas la charge mentale.
           </p>
         </div>
 
         <ul className="mx-auto mt-10 grid w-full max-w-5xl gap-4 sm:mt-14 sm:gap-6 md:grid-cols-3 lg:gap-8">
-          {services.map((item) => (
-            <li
-              key={item.title}
-              className="flex flex-col items-center rounded-2xl border border-border bg-background/80 p-6 text-center shadow-sm ring-1 ring-transparent transition-shadow hover:shadow-md hover:ring-border/60"
-            >
-              <div
-                className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${item.tint}`}
-              >
-                <item.icon className="h-6 w-6" aria-hidden />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">
-                {item.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                {item.description}
-              </p>
+          {services.map((item, index) => (
+            <li key={item.title} className="h-full">
+              <Reveal delayMs={index * 70}>
+                <div className="flex h-full flex-col items-center rounded-2xl border border-border bg-background/80 p-6 text-center shadow-sm ring-1 ring-transparent transition-shadow hover:shadow-md hover:ring-border/60">
+                  <div
+                    className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${item.tint}`}
+                  >
+                    <item.icon className="h-6 w-6" aria-hidden />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-foreground">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
+                    {item.description}
+                  </p>
+                </div>
+              </Reveal>
             </li>
           ))}
         </ul>

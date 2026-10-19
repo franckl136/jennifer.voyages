@@ -6,7 +6,7 @@
   --brand-cream: #e8e4dc;
   --background: #f5f3ef;
   --foreground: #1a2a3d;
-  --muted: #5c6570;
+  --muted: #4f5963;
   --card: #ffffff;
   --border: #ddd8cf;
   --accent-sky: #6b93b5;
@@ -63,4 +63,26 @@ body {
 .contact-dialog::backdrop {
   background: rgba(26, 42, 61, 0.48);
   backdrop-filter: blur(3px);
+}
+
+/* Apparitions discrètes (Reveal) */
+.reveal {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

@@ -25,10 +25,17 @@ type ContactLinkProps = {
   className?: string;
   children: ReactNode;
   onClick?: () => void;
+  /** Origine du clic (header, footer, cta-bas-page…) pour le suivi. */
+  source?: string;
 };
 
 /** Ouvre la fenêtre de contact sans quitter la page. */
-export function ContactLink({ className, children, onClick }: ContactLinkProps) {
+export function ContactLink({
+  className,
+  children,
+  onClick,
+  source = "lien",
+}: ContactLinkProps) {
   return (
     <Link
       href="/#contact"
@@ -36,7 +43,9 @@ export function ContactLink({ className, children, onClick }: ContactLinkProps) 
       onClick={(e) => {
         e.preventDefault();
         onClick?.();
-        window.dispatchEvent(new Event(CONTACT_EVENT));
+        window.dispatchEvent(
+          new CustomEvent(CONTACT_EVENT, { detail: { source } }),
+        );
       }}
     >
       {children}
@@ -61,6 +70,7 @@ export function ContactDialog() {
   const pushedRef = useRef(false);
   const closingRef = useRef(false);
   const privacyOpenRef = useRef(false);
+  const sourceRef = useRef("lien-direct");
   const titleId = useId();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -95,6 +105,7 @@ export function ContactDialog() {
   }, []);
 
   const expand = useCallback(() => {
+    sourceRef.current = "fab-message";
     setMinimized(false);
     setPrivacyOpen(false);
     setConfirmDismiss(false);
@@ -134,13 +145,16 @@ export function ContactDialog() {
   useEffect(() => {
     const syncFromHash = () => {
       if (window.location.hash === "#contact") {
+        sourceRef.current = "lien-direct";
         setMinimized(false);
         setOpen(true);
         return;
       }
       setOpen(false);
     };
-    const onRequest = () => {
+    const onRequest = (event: Event) => {
+      const detail = (event as CustomEvent<{ source?: string }>).detail;
+      sourceRef.current = detail?.source?.trim() || "lien";
       setMinimized(false);
       ensureHash();
       setOpen(true);
@@ -212,6 +226,7 @@ export function ContactDialog() {
           message: data.get("message"),
           privacy: data.get("privacy") === "on",
           website: data.get("website"),
+          source: sourceRef.current,
         }),
       });
 

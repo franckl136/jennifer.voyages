@@ -43,13 +43,13 @@ export const metadata: Metadata = {
     siteName: "Jennifer & Voyages",
     title: "Jennifer & Voyages",
     description:
-      "Conception d’itinéraires, réservation et conseils — contactez-moi pour votre prochain voyage.",
+      "Conception d’itinéraires, réservation et conseils. Contactez-moi pour votre prochain voyage.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Jennifer & Voyages",
     description:
-      "Conception d’itinéraires, réservation et conseils — contactez-moi pour votre prochain voyage.",
+      "Conception d’itinéraires, réservation et conseils. Contactez-moi pour votre prochain voyage.",
   },
   alternates: {
     canonical: siteUrl,

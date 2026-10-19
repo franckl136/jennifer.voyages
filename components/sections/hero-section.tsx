@@ -1,5 +1,3 @@
-import { ContactLink } from "@/components/contact-dialog";
-import { ArrowRight } from "lucide-react";
 import { HeroSlideshow } from "@/components/sections/hero-slideshow";
 
 export function HeroSection() {
@@ -13,36 +11,18 @@ export function HeroSection() {
             <br />
             ma passion.
           </h1>
-          <div className="max-w-2xl space-y-4 text-base leading-relaxed text-brand-primary sm:text-lg">
-            <p>
-              Forte de{" "}
-              <strong className="font-semibold">
-                nombreuses années d&apos;expérience
-              </strong>{" "}
-              dans le monde du voyage, je mets mon{" "}
-              <strong className="font-semibold">expertise</strong> au service
-              de vos plus belles{" "}
-              <strong className="font-semibold">envies d&apos;évasion</strong>.
-            </p>
-            <p>
-              Passionnée, j&apos;imagine avec vous des{" "}
-              <strong className="font-semibold">voyages sur mesure</strong>,
-              pensés dans les{" "}
-              <strong className="font-semibold">moindres détails</strong>. Au
-              fil de mes expériences, j&apos;ai appris qu&apos;un beau voyage ne
-              se résume pas à une destination : c&apos;est avant tout{" "}
-              <strong className="font-semibold">
-                une envie, une émotion, une rencontre ou un rêve
-              </strong>{" "}
-              que l&apos;on souhaite réaliser.
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <ContactLink className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brand-primary px-6 py-3.5 text-sm font-semibold text-white shadow-md transition-transform hover:-translate-y-0.5">
-              On en parle ensemble ?
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </ContactLink>
-          </div>
+          <p className="max-w-2xl text-base leading-relaxed text-brand-primary sm:text-lg">
+            Passionnée, j&apos;imagine avec vous des{" "}
+            <strong className="font-semibold">voyages sur mesure</strong>,
+            pensés dans les{" "}
+            <strong className="font-semibold">moindres détails</strong>. Au
+            fil de mes expériences, j&apos;ai appris qu&apos;un beau voyage ne
+            se résume pas à une destination : c&apos;est avant tout{" "}
+            <strong className="font-semibold">
+              une envie, une émotion, une rencontre ou un rêve
+            </strong>{" "}
+            que l&apos;on souhaite réaliser.
+          </p>
         </div>
 
         <div className="relative mx-auto w-full max-w-2xl">

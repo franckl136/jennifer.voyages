@@ -58,7 +58,7 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
   const { from } = await searchParams;
   const backHref = from === "accueil" ? "/#blog" : "/blog";
   const backLabel =
-    from === "accueil" ? "Retour à l'accueil" : "Retour au blog";
+    from === "accueil" ? "Retour à l'accueil" : "Retour aux inspirations";
 
   if (!isNotionConfigured()) {
     notFound();

@@ -5,9 +5,9 @@ import type { Metadata } from "next";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Inspirations",
   description:
-    "Carnets de voyage, destinations et retours d’expérience de Jennifer & Voyages.",
+    "Carnets de voyage et inspirations de Jennifer & Voyages.",
 };
 
 export default async function BlogIndexPage() {
@@ -26,14 +26,13 @@ export default async function BlogIndexPage() {
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-coral">
-            Blog
+            Carnets
           </p>
           <h1 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Tous les articles
+            Toutes les inspirations
           </h1>
           <p className="mt-4 text-base text-muted sm:text-lg">
-            Destinations, saisons et retours d’expérience pour préparer votre
-            prochain départ.
+            Destinations à explorer et retours d’expérience.
           </p>
         </div>
 

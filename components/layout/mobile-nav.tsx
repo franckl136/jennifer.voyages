@@ -6,9 +6,9 @@ import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useId, useState } from "react";
 
 const nav = [
+  { href: "/#a-propos", label: "Qui je suis" },
   { href: "/#services", label: "Mes services" },
-  { href: "/#blog", label: "Blog" },
-  { href: "/#contact", label: "Contact" },
+  { href: "/#blog", label: "Carnets" },
 ];
 
 export function MobileNav() {
@@ -35,7 +35,7 @@ export function MobileNav() {
     <div className="md:hidden">
       <button
         type="button"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-foreground"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:border-brand-primary/25 hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
         aria-expanded={open}
         aria-controls={panelId}
@@ -60,28 +60,20 @@ export function MobileNav() {
             <ul className="flex flex-col items-center gap-1">
               {nav.map((item) => (
                 <li key={item.href} className="w-full max-w-xs">
-                  {item.href === "/#contact" ? (
-                    <ContactLink
-                      className="block rounded-xl px-3 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-card"
-                      onClick={close}
-                    >
-                      {item.label}
-                    </ContactLink>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="block rounded-xl px-3 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-card"
-                      onClick={close}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                  <Link
+                    href={item.href}
+                    className="block rounded-xl px-3 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
+                    onClick={close}
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
             <div className="mt-4 flex justify-center">
               <ContactLink
-                className="inline-flex min-h-10 items-center justify-center rounded-full bg-brand-primary px-5 py-2 text-sm font-medium text-white shadow-sm"
+                source="menu-mobile"
+                className="inline-flex min-h-10 items-center justify-center rounded-full bg-brand-primary px-5 py-2 text-sm font-medium text-white shadow-sm transition-[background-color,box-shadow] hover:bg-[#2436a0] hover:shadow-md"
                 onClick={close}
               >
                 Me contacter
