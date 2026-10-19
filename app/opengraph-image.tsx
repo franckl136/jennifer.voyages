@@ -8,6 +8,6 @@ export const alt = shareImageAlt;
 export const size = shareImageSize;
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
   return createShareImage();
 }

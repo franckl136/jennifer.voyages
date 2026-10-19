@@ -1,5 +1,6 @@
 "use client";
 
+import { ContactLink } from "@/components/contact-dialog";
 import { SITE, whatsappHref } from "@/lib/site";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
@@ -60,23 +61,31 @@ export function MobileNav() {
             <ul className="space-y-1">
               {nav.map((item) => (
                 <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="block rounded-xl px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card"
-                    onClick={close}
-                  >
-                    {item.label}
-                  </Link>
+                  {item.href === "/#contact" ? (
+                    <ContactLink
+                      className="block rounded-xl px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card"
+                      onClick={close}
+                    >
+                      {item.label}
+                    </ContactLink>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="block rounded-xl px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card"
+                      onClick={close}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
-            <Link
-              href="/#contact"
+            <ContactLink
               className="mt-3 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-primary px-4 py-3 text-sm font-medium text-white shadow-sm"
               onClick={close}
             >
               Me contacter
-            </Link>
+            </ContactLink>
             <ul className="mt-3 grid grid-cols-3 gap-2 border-t border-border/80 pt-3 text-center text-sm font-medium">
               <li>
                 <a

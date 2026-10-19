@@ -34,27 +34,3 @@ export function BlogSectionSkeleton() {
     </section>
   );
 }
-
-export function ContactSectionSkeleton() {
-  return (
-    <section
-      id="contact"
-      className="border-t border-border bg-pastel-mist/25 py-10 sm:py-14 lg:py-16"
-      aria-busy="true"
-      aria-label="Chargement du contact"
-    >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl space-y-3 text-center">
-          <div className="mx-auto h-5 w-24 animate-pulse rounded bg-pastel-mist" />
-          <div className="mx-auto h-10 max-w-md animate-pulse rounded bg-pastel-mist" />
-          <div className="mx-auto h-6 max-w-lg animate-pulse rounded bg-pastel-mist/80" />
-        </div>
-        <div className="mx-auto mt-12 max-w-xl space-y-4 rounded-2xl border border-border bg-card/80 p-8">
-          <div className="h-11 w-full animate-pulse rounded-xl bg-pastel-mist" />
-          <div className="h-11 w-full animate-pulse rounded-xl bg-pastel-mist" />
-          <div className="h-24 w-full animate-pulse rounded-xl bg-pastel-mist" />
-        </div>
-      </div>
-    </section>
-  );
-}

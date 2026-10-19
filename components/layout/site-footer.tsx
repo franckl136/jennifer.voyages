@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
+import { ContactLink } from "@/components/contact-dialog";
 import {
   FooterEmailLink,
   FooterInstagramLink,
@@ -42,12 +43,9 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/#contact"
-                  className="inline-flex py-1.5 text-foreground/80 hover:text-foreground"
-                >
+                <ContactLink className="inline-flex py-1.5 text-foreground/80 hover:text-foreground">
                   Contact
-                </Link>
+                </ContactLink>
               </li>
             </ul>
           </div>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ContactLink } from "@/components/contact-dialog";
 import { ArrowRight } from "lucide-react";
 import { HeroSlideshow } from "@/components/sections/hero-slideshow";
 
@@ -36,13 +36,10 @@ export function HeroSection() {
             </p>
           </div>
           <div className="flex justify-center">
-            <Link
-              href="/#contact"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brand-primary px-6 py-3.5 text-sm font-semibold text-white shadow-md transition-transform hover:-translate-y-0.5"
-            >
+            <ContactLink className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brand-primary px-6 py-3.5 text-sm font-semibold text-white shadow-md transition-transform hover:-translate-y-0.5">
               On en parle ensemble ?
               <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
+            </ContactLink>
           </div>
         </div>
 

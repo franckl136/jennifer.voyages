@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
+import { ContactLink } from "@/components/contact-dialog";
 import { MobileNav } from "@/components/layout/mobile-nav";
 
 const nav = [
@@ -23,24 +24,30 @@ export function SiteHeader() {
           className="hidden items-center gap-8 text-sm font-medium text-muted md:flex"
           aria-label="Navigation principale"
         >
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="transition-colors hover:text-foreground"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {nav.map((item) =>
+            item.href === "/#contact" ? (
+              <ContactLink
+                key={item.href}
+                className="transition-colors hover:text-foreground"
+              >
+                {item.label}
+              </ContactLink>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="transition-colors hover:text-foreground"
+              >
+                {item.label}
+              </Link>
+            ),
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/#contact"
-            className="hidden min-h-10 items-center rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 md:inline-flex"
-          >
+          <ContactLink className="hidden min-h-10 items-center rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 md:inline-flex">
             Me contacter
-          </Link>
+          </ContactLink>
           <MobileNav />
         </div>
       </div>

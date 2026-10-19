@@ -1,3 +1,4 @@
+import { ContactLink } from "@/components/contact-dialog";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -20,12 +21,9 @@ export default function NotFound() {
         >
           Retour à l&apos;accueil
         </Link>
-        <Link
-          href="/#contact"
-          className="inline-flex rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-pastel-mist/60"
-        >
+        <ContactLink className="inline-flex rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-pastel-mist/60">
           Me contacter
-        </Link>
+        </ContactLink>
       </div>
     </div>
   );
