@@ -49,7 +49,7 @@ export function ServicesSection() {
           {services.map((item) => (
             <li
               key={item.title}
-              className="rounded-2xl border border-border bg-background/80 p-6 shadow-sm ring-1 ring-transparent transition-shadow hover:shadow-md hover:ring-border/60"
+              className="flex flex-col items-center rounded-2xl border border-border bg-background/80 p-6 text-center shadow-sm ring-1 ring-transparent transition-shadow hover:shadow-md hover:ring-border/60 md:items-start md:text-left"
             >
               <div
                 className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${item.tint}`}
