@@ -1,7 +1,6 @@
 "use client";
 
 import { ContactLink } from "@/components/contact-dialog";
-import { SITE, whatsappHref } from "@/lib/site";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useId, useState } from "react";
@@ -55,15 +54,15 @@ export function MobileNav() {
           />
           <nav
             id={panelId}
-            className="absolute inset-x-0 top-full z-50 border-b border-brand-primary/10 bg-brand-cream px-4 py-4 shadow-lg sm:px-6"
+            className="absolute inset-x-0 top-full z-50 border-b border-brand-primary/10 bg-brand-cream px-4 py-5 shadow-lg sm:px-6"
             aria-label="Navigation mobile"
           >
-            <ul className="space-y-1">
+            <ul className="flex flex-col items-center gap-1">
               {nav.map((item) => (
-                <li key={item.href}>
+                <li key={item.href} className="w-full max-w-xs">
                   {item.href === "/#contact" ? (
                     <ContactLink
-                      className="block rounded-xl px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card"
+                      className="block rounded-xl px-3 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-card"
                       onClick={close}
                     >
                       {item.label}
@@ -71,7 +70,7 @@ export function MobileNav() {
                   ) : (
                     <Link
                       href={item.href}
-                      className="block rounded-xl px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card"
+                      className="block rounded-xl px-3 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-card"
                       onClick={close}
                     >
                       {item.label}
@@ -80,45 +79,14 @@ export function MobileNav() {
                 </li>
               ))}
             </ul>
-            <ContactLink
-              className="mt-3 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-primary px-4 py-3 text-sm font-medium text-white shadow-sm"
-              onClick={close}
-            >
-              Me contacter
-            </ContactLink>
-            <ul className="mt-3 grid grid-cols-3 gap-2 border-t border-border/80 pt-3 text-center text-sm font-medium">
-              <li>
-                <a
-                  href={`tel:+${SITE.phoneE164}`}
-                  className="block rounded-xl px-2 py-3 text-foreground hover:bg-card"
-                  onClick={close}
-                >
-                  Téléphone
-                </a>
-              </li>
-              <li>
-                <a
-                  href={whatsappHref()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-xl px-2 py-3 text-foreground hover:bg-card"
-                  onClick={close}
-                >
-                  WhatsApp
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SITE.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-xl px-2 py-3 text-foreground hover:bg-card"
-                  onClick={close}
-                >
-                  Instagram
-                </a>
-              </li>
-            </ul>
+            <div className="mt-4 flex justify-center">
+              <ContactLink
+                className="inline-flex min-h-10 items-center justify-center rounded-full bg-brand-primary px-5 py-2 text-sm font-medium text-white shadow-sm"
+                onClick={close}
+              >
+                Me contacter
+              </ContactLink>
+            </div>
           </nav>
         </>
       ) : null}
