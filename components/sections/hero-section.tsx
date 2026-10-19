@@ -8,8 +8,10 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(142,189,212,0.22),transparent)]" />
       <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 pb-10 pt-6 sm:gap-8 sm:px-6 sm:pb-14 sm:pt-10 lg:pt-12 lg:pb-16">
         <div className="mx-auto flex max-w-2xl flex-col items-center space-y-6 text-center sm:space-y-8">
-          <h1 className="text-balance bg-gradient-to-r from-[#121f66] to-brand-primary bg-clip-text text-[2rem] font-semibold leading-[1.15] tracking-tight text-transparent sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
-            Votre voyage, vos envies, ma passion.
+          <h1 className="bg-gradient-to-r from-[#121f66] to-brand-primary bg-clip-text text-[2rem] font-semibold leading-[1.15] tracking-tight text-transparent sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
+            Votre voyage, vos envies,
+            <br />
+            ma passion.
           </h1>
           <div className="max-w-2xl space-y-4 text-base leading-relaxed text-brand-primary sm:text-lg">
             <p>
