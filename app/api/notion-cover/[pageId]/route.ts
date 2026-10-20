@@ -1,3 +1,4 @@
+import { notionImageResponse } from "@/lib/notion-image-response";
 import {
   fetchFreshCoverUrl,
   isNotionConfigured,
@@ -10,8 +11,7 @@ export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ pageId: string }> };
 
 /**
- * Proxy d’octets avec cache CDN long sur l’URL stable `/api/notion-cover/…`.
- * Après le 1er hit, accueil → article réutilise le même cache (plus de flash).
+ * Couverture Notion : octets compressés + cache CDN long sur URL stable.
  */
 export async function GET(_request: Request, context: RouteContext) {
   if (!isNotionConfigured()) {
@@ -26,21 +26,7 @@ export async function GET(_request: Request, context: RouteContext) {
     if (!url) {
       return new NextResponse("Image introuvable", { status: 404 });
     }
-
-    const upstream = await fetch(url);
-    if (!upstream.ok || !upstream.body) {
-      return new NextResponse("Image indisponible", { status: 502 });
-    }
-
-    const contentType = upstream.headers.get("content-type") || "image/jpeg";
-    return new NextResponse(upstream.body, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType,
-        "Cache-Control":
-          "public, s-maxage=86400, stale-while-revalidate=604800",
-      },
-    });
+    return await notionImageResponse(url);
   } catch {
     return new NextResponse("Erreur image", { status: 500 });
   }

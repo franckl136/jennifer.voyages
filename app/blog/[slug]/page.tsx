@@ -2,7 +2,6 @@ import {
   BlogArticleBlocks,
   BlogArticleBlocksFallback,
 } from "@/components/blog-article-blocks";
-import { BlogCoverImage } from "@/components/blog-cover-image";
 import {
   getPostBySlug,
   isNotionConfigured,
@@ -97,7 +96,6 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
         <header className="border-b border-border pb-10">
           {post.coverUrl ? (
             <>
-              {/* Précharge LCP : démarre avant le paint du client component */}
               <link
                 rel="preload"
                 as="image"
@@ -105,11 +103,14 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
                 fetchPriority="high"
               />
               <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-pastel-mist shadow-sm sm:aspect-[2/1]">
-                <BlogCoverImage
+                {/* Server <img> : pas d’hydratation client, même URL que la grille (cache partagé) */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={post.coverUrl}
                   alt={post.title}
-                  priority
                   className="absolute inset-0 h-full w-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
             </>

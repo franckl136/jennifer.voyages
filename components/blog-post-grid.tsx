@@ -1,6 +1,6 @@
+import { BlogCardLink } from "@/components/blog-card-link";
 import { BlogCoverImage } from "@/components/blog-cover-image";
 import { ArrowUpRight, Clock } from "lucide-react";
-import Link from "next/link";
 
 export type BlogCardPost = {
   id: string;
@@ -21,13 +21,14 @@ export function BlogPostGrid({
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-wrap justify-center gap-6">
       {posts.map((post, index) => (
-        <Link
+        <BlogCardLink
           key={post.id}
           href={
             from
               ? `/blog/${post.slug}?from=${from}`
               : `/blog/${post.slug}`
           }
+          coverUrl={post.coverUrl}
           className="group flex w-full max-w-md flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-lg sm:w-[calc(50%-0.75rem)] sm:max-w-none md:w-[calc((100%-3rem)/3)]"
         >
           <div className="relative aspect-[16/10] overflow-hidden bg-pastel-mist">
@@ -71,7 +72,7 @@ export function BlogPostGrid({
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </span>
           </div>
-        </Link>
+        </BlogCardLink>
       ))}
     </div>
   );
