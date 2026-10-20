@@ -15,7 +15,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 const backClass =
-  "mb-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:border-brand-primary/25 hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40";
+  "mb-8 inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40";
 
 export const revalidate = 300;
 
@@ -91,12 +91,12 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         {from === "accueil" ? (
           <SectionLink sectionId="blog" className={backClass}>
-            <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+            <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Précédent
           </SectionLink>
         ) : (
           <Link href="/blog" className={backClass}>
-            <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+            <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Précédent
           </Link>
         )}
