@@ -2,11 +2,12 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
 import { ContactLink } from "@/components/contact-dialog";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { SectionLink } from "@/components/section-link";
 
 const nav = [
-  { href: "/#a-propos", label: "Qui suis-je ?" },
-  { href: "/#services", label: "Mes services" },
-  { href: "/#blog", label: "Carnets" },
+  { sectionId: "a-propos", label: "Qui suis-je ?" },
+  { sectionId: "services", label: "Mes services" },
+  { sectionId: "blog", label: "Carnets" },
 ];
 
 const navLinkClass =
@@ -31,9 +32,13 @@ export function SiteHeader() {
           aria-label="Navigation principale"
         >
           {nav.map((item) => (
-            <Link key={item.href} href={item.href} className={navLinkClass}>
+            <SectionLink
+              key={item.sectionId}
+              sectionId={item.sectionId}
+              className={navLinkClass}
+            >
               {item.label}
-            </Link>
+            </SectionLink>
           ))}
         </nav>
 

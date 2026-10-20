@@ -8,6 +8,7 @@ import {
   FooterPhoneLink,
   FooterShareButton,
 } from "@/components/footer-share-button";
+import { SectionLink } from "@/components/section-link";
 
 const footerNavClass =
   "inline-flex rounded-lg px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40";
@@ -33,29 +34,29 @@ export function SiteFooter() {
             </p>
             <ul className="mt-3 flex flex-col items-center gap-0.5 text-sm">
               <li>
-                <Link href="/#a-propos" className={footerNavClass}>
+                <SectionLink sectionId="a-propos" className={footerNavClass}>
                   Qui suis-je ?
-                </Link>
+                </SectionLink>
               </li>
               <li>
-                <Link href="/#services" className={footerNavClass}>
+                <SectionLink sectionId="services" className={footerNavClass}>
                   Mes services
-                </Link>
+                </SectionLink>
               </li>
               <li>
-                <Link href="/#blog" className={footerNavClass}>
+                <SectionLink sectionId="blog" className={footerNavClass}>
                   Carnets
-                </Link>
+                </SectionLink>
               </li>
               <li>
-                <Link href="/#parcours" className={footerNavClass}>
+                <SectionLink sectionId="parcours" className={footerNavClass}>
                   Le parcours
-                </Link>
+                </SectionLink>
               </li>
               <li>
-                <Link href="/#faq" className={footerNavClass}>
+                <SectionLink sectionId="faq" className={footerNavClass}>
                   FAQ
-                </Link>
+                </SectionLink>
               </li>
               <li>
                 <ContactLink source="footer" className={footerNavClass}>

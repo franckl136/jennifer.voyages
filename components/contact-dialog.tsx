@@ -3,7 +3,7 @@
 import { SITE, whatsappHref } from "@/lib/site";
 import { ArrowLeft, MessageCircle, Minus, Phone, Send, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   type FormEvent,
   type ReactNode,
@@ -18,6 +18,7 @@ const fieldClass =
   "w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground outline-none ring-foreground/10 placeholder:text-muted focus:ring-2 disabled:opacity-60";
 
 const CONTACT_EVENT = "jv-open-contact";
+const CONTACT_SOURCE_KEY = "jv-contact-source";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -29,7 +30,7 @@ type ContactLinkProps = {
   source?: string;
 };
 
-/** Ouvre la fenêtre de contact sans quitter la page. */
+/** Ouvre le contact via l’URL /contact (modale). */
 export function ContactLink({
   className,
   children,
@@ -38,11 +39,15 @@ export function ContactLink({
 }: ContactLinkProps) {
   return (
     <Link
-      href="/#contact"
+      href="/contact"
       className={className}
-      onClick={(e) => {
-        e.preventDefault();
+      onClick={() => {
         onClick?.();
+        try {
+          sessionStorage.setItem(CONTACT_SOURCE_KEY, source);
+        } catch {
+          /* ignore */
+        }
         window.dispatchEvent(
           new CustomEvent(CONTACT_EVENT, { detail: { source } }),
         );
@@ -67,7 +72,6 @@ function formHasDraft(form: HTMLFormElement | null) {
 export function ContactDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const pushedRef = useRef(false);
   const closingRef = useRef(false);
   const privacyOpenRef = useRef(false);
   const sourceRef = useRef("lien-direct");
@@ -75,6 +79,7 @@ export function ContactDialog() {
   const backdropPointerDownRef = useRef(false);
   const titleId = useId();
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
@@ -88,41 +93,38 @@ export function ContactDialog() {
     privacyOpenRef.current = privacyOpen;
   }, [privacyOpen]);
 
-  const stripHash = useCallback(() => {
-    if (window.location.hash !== "#contact") return;
-    const base = window.location.pathname + window.location.search;
-    if (pushedRef.current) {
-      pushedRef.current = false;
-      history.back();
-      return;
+  const leaveContactPath = useCallback(() => {
+    if (pathname === "/contact") {
+      router.replace("/");
     }
-    history.replaceState(null, "", base);
-  }, []);
+  }, [pathname, router]);
 
-  const ensureHash = useCallback(() => {
-    if (window.location.hash === "#contact") return;
-    const next = `${window.location.pathname}${window.location.search}#contact`;
-    history.pushState(null, "", next);
-    pushedRef.current = true;
-  }, []);
+  const ensureContactPath = useCallback(() => {
+    if (pathname !== "/contact") {
+      router.push("/contact");
+    }
+  }, [pathname, router]);
 
   const expand = useCallback(() => {
     sourceRef.current = "fab-message";
     setMinimized(false);
     setPrivacyOpen(false);
     setConfirmDismiss(false);
-    ensureHash();
-    setOpen(true);
-  }, [ensureHash]);
+    if (pathname === "/contact") {
+      setOpen(true);
+    } else {
+      ensureContactPath();
+    }
+  }, [ensureContactPath, pathname]);
 
   /** Réduit le formulaire : l’icône Message n’apparaît que s’il y a une saisie. */
   const minimize = useCallback(() => {
     setPrivacyOpen(false);
     setConfirmDismiss(false);
     setMinimized(formHasDraft(formRef.current));
-    stripHash();
     setOpen(false);
-  }, [stripHash]);
+    leaveContactPath();
+  }, [leaveContactPath]);
 
   const clearAndClose = useCallback(() => {
     setPrivacyOpen(false);
@@ -131,9 +133,9 @@ export function ContactDialog() {
     setStatus("idle");
     setErrorMsg("");
     formRef.current?.reset();
-    stripHash();
     setOpen(false);
-  }, [stripHash]);
+    leaveContactPath();
+  }, [leaveContactPath]);
 
   /** Ferme tout et vide le formulaire (demande confirmation s’il y a une saisie). */
   const dismiss = useCallback(() => {
@@ -145,38 +147,37 @@ export function ContactDialog() {
   }, [clearAndClose]);
 
   useEffect(() => {
-    const syncFromHash = () => {
-      if (window.location.hash === "#contact") {
-        sourceRef.current = "lien-direct";
-        setMinimized(false);
-        setOpen(true);
-        return;
-      }
-      setOpen(false);
-    };
     const onRequest = (event: Event) => {
       const detail = (event as CustomEvent<{ source?: string }>).detail;
       sourceRef.current = detail?.source?.trim() || "lien";
       setMinimized(false);
-      ensureHash();
-      setOpen(true);
     };
-
-    syncFromHash();
     window.addEventListener(CONTACT_EVENT, onRequest);
-    window.addEventListener("hashchange", syncFromHash);
-    window.addEventListener("popstate", syncFromHash);
-    return () => {
-      window.removeEventListener(CONTACT_EVENT, onRequest);
-      window.removeEventListener("hashchange", syncFromHash);
-      window.removeEventListener("popstate", syncFromHash);
-    };
-  }, [ensureHash]);
+    return () => window.removeEventListener(CONTACT_EVENT, onRequest);
+  }, []);
 
   useEffect(() => {
-    if (window.location.hash === "#contact") return;
+    if (pathname === "/contact") {
+      try {
+        const stored = sessionStorage.getItem(CONTACT_SOURCE_KEY);
+        if (stored) {
+          sourceRef.current = stored;
+          sessionStorage.removeItem(CONTACT_SOURCE_KEY);
+        } else if (sourceRef.current === "lien-direct") {
+          sourceRef.current = "lien-direct";
+        }
+      } catch {
+        /* ignore */
+      }
+      setMinimized(false);
+      setOpen(true);
+      return;
+    }
     setOpen(false);
-  }, [pathname]);
+    if (typeof window !== "undefined" && window.location.hash === "#contact") {
+      router.replace("/contact");
+    }
+  }, [pathname, router]);
 
   useEffect(() => {
     const el = dialogRef.current;
@@ -266,7 +267,7 @@ export function ContactDialog() {
           setOpen(false);
           if (!closingRef.current) {
             setMinimized(formHasDraft(formRef.current));
-            stripHash();
+            leaveContactPath();
           }
           closingRef.current = false;
         }}

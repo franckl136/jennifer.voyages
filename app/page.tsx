@@ -1,3 +1,4 @@
+import { HomeScroll } from "@/components/home-scroll";
 import { BlogSectionSkeleton } from "@/components/home-skeletons";
 import { AboutSection } from "@/components/sections/about-section";
 import { BlogSection } from "@/components/sections/blog-section";
@@ -14,6 +15,7 @@ export const revalidate = 300;
 export default function Home() {
   return (
     <>
+      <HomeScroll />
       <HeroSection />
       <AboutSection />
       <ServicesSection />

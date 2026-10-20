@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { ContactDialog } from "@/components/contact-dialog";
+import { DocumentTitle } from "@/components/document-title";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 
@@ -64,6 +65,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${montserrat.variable} font-sans antialiased`}>
+        <DocumentTitle />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

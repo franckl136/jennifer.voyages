@@ -1,14 +1,14 @@
 "use client";
 
 import { ContactLink } from "@/components/contact-dialog";
-import Link from "next/link";
+import { SectionLink } from "@/components/section-link";
 import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useId, useState } from "react";
 
 const nav = [
-  { href: "/#a-propos", label: "Qui suis-je ?" },
-  { href: "/#services", label: "Mes services" },
-  { href: "/#blog", label: "Carnets" },
+  { sectionId: "a-propos", label: "Qui suis-je ?" },
+  { sectionId: "services", label: "Mes services" },
+  { sectionId: "blog", label: "Carnets" },
 ];
 
 export function MobileNav() {
@@ -59,14 +59,14 @@ export function MobileNav() {
           >
             <ul className="flex flex-col items-center gap-1">
               {nav.map((item) => (
-                <li key={item.href} className="w-full max-w-xs">
-                  <Link
-                    href={item.href}
+                <li key={item.sectionId} className="w-full max-w-xs">
+                  <SectionLink
+                    sectionId={item.sectionId}
                     className="block rounded-xl px-3 py-2.5 text-center text-sm font-medium text-foreground transition-colors hover:bg-brand-primary/10 hover:text-brand-primary"
-                    onClick={close}
+                    onNavigate={close}
                   >
                     {item.label}
-                  </Link>
+                  </SectionLink>
                 </li>
               ))}
             </ul>
