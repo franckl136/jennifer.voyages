@@ -181,8 +181,13 @@ function NotionBlock({ block }: { block: BlockWithKids }) {
     }
     case "image": {
       const img = block.image;
-      const url =
+      const rawUrl =
         img.type === "external" ? img.external.url : img.file.url;
+      // Fichiers Notion signés : proxy stable (évite 403 après ~1 h)
+      const url =
+        img.type === "file"
+          ? `/api/notion-file/${block.id}`
+          : rawUrl;
       const caption = img.caption?.length
         ? img.caption.map((t) => t.plain_text).join("")
         : "";

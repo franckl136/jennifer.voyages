@@ -38,7 +38,17 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "prod-files-secure-euc1.s3.eu-central-1.amazonaws.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "s3.us-west-2.amazonaws.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "s3.eu-central-1.amazonaws.com",
         pathname: "/**",
       },
     ],

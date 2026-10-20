@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type BlogCoverImageProps = {
   src: string;
@@ -11,9 +11,8 @@ type BlogCoverImageProps = {
 };
 
 /**
- * Couvertures Notion (URLs externes). next/image + navigation client
- * laisse parfois les images vides jusqu’à un refresh : on monte l’img
- * après hydratation pour forcer un vrai chargement.
+ * Couvertures blog. Les URLs Notion sont passées par `/api/notion-cover`
+ * (stables) ; repli pastel si le chargement échoue.
  */
 export function BlogCoverImage({
   src,
@@ -21,23 +20,15 @@ export function BlogCoverImage({
   className = "absolute inset-0 h-full w-full object-cover",
   priority = false,
 }: BlogCoverImageProps) {
-  const [mounted, setMounted] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, [src]);
-
-  if (!mounted) {
+  if (failed) {
     return (
-      <div
-        className="absolute inset-0 bg-pastel-mist"
-        aria-hidden
-      />
+      <div className="absolute inset-0 bg-pastel-mist" aria-hidden />
     );
   }
 
   return (
-    // URLs Notion / S3 signées : img native plus fiable que next/image ici
     // eslint-disable-next-line @next/next/no-img-element
     <img
       key={src}
@@ -47,6 +38,7 @@ export function BlogCoverImage({
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       fetchPriority={priority ? "high" : "auto"}
+      onError={() => setFailed(true)}
     />
   );
 }
