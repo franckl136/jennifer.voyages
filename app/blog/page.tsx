@@ -26,16 +26,16 @@ export default async function BlogIndexPage() {
   return (
     <div className="bg-gradient-to-b from-pastel-sand/40 to-background">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-        <header className="mx-auto max-w-2xl text-center">
-          <SectionLink
-            sectionId="blog"
-            className="inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
-          >
-            <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Précédent
-          </SectionLink>
+        <SectionLink
+          sectionId="blog"
+          className="inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Précédent
+        </SectionLink>
 
-          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-accent-coral">
+        <header className="mx-auto mt-8 max-w-2xl text-center sm:mt-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-coral">
             Carnets
           </p>
           <h1 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
