@@ -28,7 +28,8 @@ export default async function BlogIndexPage() {
     <div className="bg-gradient-to-b from-pastel-sand/40 to-background">
       {/* Padding identique à la section #blog de l’accueil → pas d’effet d’escalier */}
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-        <header className="relative">
+        {/* max-w-5xl = même largeur que la grille d’articles → Accueil aligné au bord des cartes */}
+        <header className="relative mx-auto max-w-5xl">
           <SectionLink
             sectionId="blog"
             className={`absolute left-0 top-0 z-10 ${backLinkClass} min-h-0 py-0`}
