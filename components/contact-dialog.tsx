@@ -313,32 +313,39 @@ export function ContactDialog() {
             backdropPointerDownRef.current &&
             e.target === dialogRef.current
           ) {
-            minimize();
+            // Vue RGPD : le fond ne ferme pas le formulaire (Précédent uniquement)
+            if (privacyOpenRef.current) {
+              setPrivacyOpen(false);
+            } else {
+              minimize();
+            }
           }
           backdropPointerDownRef.current = false;
         }}
       >
-        {/* Barre sticky : reste tappable même après ouverture du clavier iOS */}
-        <div className="sticky top-0 z-40 flex shrink-0 items-center justify-end gap-0.5 border-b border-border/70 bg-card px-2 py-1.5">
-          <button
-            type="button"
-            onClick={minimize}
-            className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
-            aria-label="Réduire le formulaire"
-            title="Réduire"
-          >
-            <Minus className="h-5 w-5" aria-hidden />
-          </button>
-          <button
-            type="button"
-            onClick={dismiss}
-            className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
-            aria-label="Fermer le formulaire"
-            title="Fermer"
-          >
-            <X className="h-5 w-5" aria-hidden />
-          </button>
-        </div>
+        {/* Réduire / fermer uniquement sur le formulaire — pas sur la vue RGPD (Précédent seul) */}
+        {!privacyOpen ? (
+          <div className="sticky top-0 z-40 flex shrink-0 items-center justify-end gap-0.5 border-b border-border/70 bg-card px-2 py-1.5">
+            <button
+              type="button"
+              onClick={minimize}
+              className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-lg text-muted transition-colors [-webkit-tap-highlight-color:transparent] hover:text-foreground active:bg-pastel-mist/70 [@media(hover:hover)]:hover:bg-pastel-mist"
+              aria-label="Réduire le formulaire"
+              title="Réduire"
+            >
+              <Minus className="h-5 w-5" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={dismiss}
+              className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-lg text-muted transition-colors [-webkit-tap-highlight-color:transparent] hover:text-foreground active:bg-pastel-mist/70 [@media(hover:hover)]:hover:bg-pastel-mist"
+              aria-label="Fermer le formulaire"
+              title="Fermer"
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
+        ) : null}
 
         <div className="relative px-4 py-5 sm:px-8 sm:py-8">
           {confirmDismiss ? (
