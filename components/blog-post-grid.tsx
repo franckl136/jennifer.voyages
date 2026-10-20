@@ -36,7 +36,7 @@ export function BlogPostGrid({
                 src={post.coverUrl}
                 alt={post.title}
                 priority={index < 3}
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="absolute inset-0 h-full w-full object-cover group-hover:scale-105"
               />
             ) : (
               <div

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type BlogCoverImageProps = {
   src: string;
@@ -11,8 +11,8 @@ type BlogCoverImageProps = {
 };
 
 /**
- * Couvertures blog. Les URLs Notion sont passées par `/api/notion-cover`
- * (stables) ; repli pastel si le chargement échoue.
+ * Couvertures blog : fondu à l’apparition, placeholder le temps du chargement.
+ * Les URLs Notion passent par `/api/notion-cover` (stables).
  */
 export function BlogCoverImage({
   src,
@@ -20,7 +20,22 @@ export function BlogCoverImage({
   className = "absolute inset-0 h-full w-full object-cover",
   priority = false,
 }: BlogCoverImageProps) {
+  const imgRef = useRef<HTMLImageElement>(null);
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+    setLoaded(false);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setReduceMotion(reduce);
+
+    const img = imgRef.current;
+    if (img?.complete && img.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, [src]);
 
   if (failed) {
     return (
@@ -29,16 +44,37 @@ export function BlogCoverImage({
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      key={src}
-      src={src}
-      alt={alt}
-      className={className}
-      loading={priority ? "eager" : "lazy"}
-      decoding="async"
-      fetchPriority={priority ? "high" : "auto"}
-      onError={() => setFailed(true)}
-    />
+    <>
+      {!loaded ? (
+        <div
+          className={`absolute inset-0 bg-pastel-mist${reduceMotion ? "" : " animate-pulse"}`}
+          aria-hidden
+        />
+      ) : null}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={imgRef}
+        key={src}
+        src={src}
+        alt={alt}
+        className={`${className} ${
+          reduceMotion
+            ? loaded
+              ? "opacity-100"
+              : "opacity-0"
+            : `duration-700 ease-out ${loaded ? "opacity-100" : "opacity-0"}`
+        }`}
+        style={
+          reduceMotion
+            ? undefined
+            : { transitionProperty: "opacity, transform" }
+        }
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        fetchPriority={priority ? "high" : "auto"}
+        onLoad={() => setLoaded(true)}
+        onError={() => setFailed(true)}
+      />
+    </>
   );
 }
