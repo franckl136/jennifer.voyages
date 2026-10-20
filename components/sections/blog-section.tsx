@@ -23,7 +23,7 @@ export async function BlogSection() {
   return (
     <section
       id="blog"
-      className="bg-gradient-to-b from-pastel-sand/40 to-background py-10 sm:py-14 lg:py-16"
+      className="scroll-mt-24 bg-gradient-to-b from-pastel-sand/40 to-background py-10 sm:py-14 lg:py-16 sm:scroll-mt-28"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">

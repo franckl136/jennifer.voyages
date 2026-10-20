@@ -26,7 +26,8 @@ export default async function BlogIndexPage() {
 
   return (
     <div className="bg-gradient-to-b from-pastel-sand/40 to-background">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+      {/* Padding identique à la section #blog de l’accueil → pas d’effet d’escalier */}
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
         <header className="relative">
           <SectionLink
             sectionId="blog"
@@ -54,7 +55,7 @@ export default async function BlogIndexPage() {
             Mes carnets de voyage arrivent bientôt.
           </p>
         ) : (
-          <div className="mt-12 sm:mt-14">
+          <div className="mt-12">
             <BlogPostGrid posts={posts} from="liste" />
           </div>
         )}
