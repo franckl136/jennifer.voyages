@@ -2,7 +2,6 @@ import {
   BlogArticleBlocks,
   BlogArticleBlocksFallback,
 } from "@/components/blog-article-blocks";
-import { SectionLink } from "@/components/section-link";
 import { SoftImage } from "@/components/soft-image";
 import { backLinkClass } from "@/lib/back-link";
 import {
@@ -90,10 +89,10 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         {from === "accueil" ? (
-          <SectionLink sectionId="blog" className={backClass}>
+          <Link href="/" className={backClass}>
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Carnets
-          </SectionLink>
+            Accueil
+          </Link>
         ) : (
           <Link href="/blog" className={backClass}>
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
