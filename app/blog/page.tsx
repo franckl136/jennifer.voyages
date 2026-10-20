@@ -44,12 +44,6 @@ export default async function BlogIndexPage() {
           <p className="mt-4 text-base text-muted sm:text-lg">
             Destinations à explorer et retours d’expérience.
           </p>
-          {posts.length > 0 ? (
-            <p className="mt-3 text-sm text-muted/80">
-              {posts.length}{" "}
-              {posts.length === 1 ? "carnet" : "carnets"}
-            </p>
-          ) : null}
         </header>
 
         {posts.length === 0 ? (
