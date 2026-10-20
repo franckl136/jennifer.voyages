@@ -62,6 +62,23 @@ body {
   height: fit-content;
   max-height: min(calc(100dvh - 2.5rem), 100%);
   color: var(--foreground);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile : ancré en haut — évite le recentrage saccadé quand le clavier s’ouvre */
+@media (max-width: 639px) {
+  .contact-dialog {
+    top: max(0.5rem, env(safe-area-inset-top));
+    bottom: auto;
+    margin: 0 auto;
+    max-height: min(calc(100dvh - 1rem), 100%);
+  }
+
+  .contact-dialog[data-vv-ready] {
+    top: calc(var(--vv-offset-top, 0px) + 0.5rem);
+    max-height: calc(var(--vv-height, 100dvh) - 1rem);
+  }
 }
 
 .contact-dialog::backdrop {

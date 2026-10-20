@@ -2,6 +2,7 @@
 
 import { ContactLink } from "@/components/contact-dialog";
 import { SectionLink } from "@/components/section-link";
+import { lockBodyScroll } from "@/lib/scroll-lock";
 import { Menu, X } from "lucide-react";
 import { useCallback, useEffect, useId } from "react";
 
@@ -26,11 +27,10 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
       if (e.key === "Escape") close();
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockBodyScroll("[data-scroll-lock-allow]");
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      unlock();
     };
   }, [open, close]);
 
@@ -58,6 +58,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
           />
           <nav
             id={panelId}
+            data-scroll-lock-allow
             className="absolute inset-x-0 top-full z-50 border-b border-brand-primary/10 bg-brand-cream px-4 py-5 shadow-lg sm:px-6"
             aria-label="Navigation mobile"
           >

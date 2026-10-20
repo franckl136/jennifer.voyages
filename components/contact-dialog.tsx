@@ -1,6 +1,7 @@
 "use client";
 
 import { backLinkClass } from "@/lib/back-link";
+import { lockBodyScroll } from "@/lib/scroll-lock";
 import { SITE, whatsappHref } from "@/lib/site";
 import { ArrowLeft, MessageCircle, Minus, Phone, Send, X } from "lucide-react";
 import Link from "next/link";
@@ -185,11 +186,8 @@ export function ContactDialog() {
     if (open) {
       closingRef.current = false;
       if (!el.open) el.showModal();
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
+      const unlock = lockBodyScroll();
+      return unlock;
     }
     setPrivacyOpen(false);
     setConfirmDismiss(false);
@@ -199,15 +197,43 @@ export function ContactDialog() {
     }
   }, [open]);
 
+  /** Suit le visualViewport (clavier iOS) pour éviter le saut / recentrage. */
+  useEffect(() => {
+    if (!open) return;
+    const el = dialogRef.current;
+    const vv = window.visualViewport;
+    if (!el || !vv) return;
+
+    const sync = () => {
+      el.style.setProperty("--vv-height", `${vv.height}px`);
+      el.style.setProperty("--vv-offset-top", `${vv.offsetTop}px`);
+      el.dataset.vvReady = "";
+    };
+    sync();
+    vv.addEventListener("resize", sync);
+    vv.addEventListener("scroll", sync);
+    return () => {
+      vv.removeEventListener("resize", sync);
+      vv.removeEventListener("scroll", sync);
+      delete el.dataset.vvReady;
+      el.style.removeProperty("--vv-height");
+      el.style.removeProperty("--vv-offset-top");
+    };
+  }, [open]);
+
   useEffect(() => {
     const el = dialogRef.current;
     if (!el?.open) return;
     el.scrollTop = 0;
     if (privacyOpen) {
-      el.querySelector<HTMLButtonElement>("#contact-privacy-back")?.focus();
+      el.querySelector<HTMLButtonElement>("#contact-privacy-back")?.focus({
+        preventScroll: true,
+      });
       return;
     }
-    el.querySelector<HTMLInputElement>("#contact-name")?.focus();
+    el.querySelector<HTMLInputElement>("#contact-name")?.focus({
+      preventScroll: true,
+    });
   }, [open, privacyOpen]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
