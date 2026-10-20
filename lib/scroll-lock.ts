@@ -1,11 +1,54 @@
+export type ScrollLockOptions = {
+  /**
+   * `fixed` — formulaires iOS (bloque le saut clavier).
+   * `overflow` — menus : garde le header sticky visible si on n’est pas en haut de page.
+   */
+  strategy?: "fixed" | "overflow";
+  /** Zones où le touchmove reste autorisé (stratégie overflow). */
+  allowSelector?: string;
+};
+
 /**
- * Verrouille le scroll de la page derrière une modale.
- * `position: fixed` empêche Safari iOS de faire monter/descendre toute la page
- * pour « suivre » le champ focus (source classique de saccades).
+ * Verrouille le scroll de la page derrière une modale / un menu.
  */
-export function lockBodyScroll() {
-  const scrollY = window.scrollY;
+export function lockBodyScroll(options: ScrollLockOptions = {}) {
+  const strategy = options.strategy ?? "fixed";
+  const allowSelector =
+    options.allowSelector ?? ".contact-dialog, [data-scroll-lock-allow]";
+
   const { body, documentElement: html } = document;
+  const scrollY = window.scrollY;
+
+  if (strategy === "overflow") {
+    const prev = {
+      htmlOverflow: html.style.overflow,
+      bodyOverflow: body.style.overflow,
+      bodyOverscroll: body.style.overscrollBehavior,
+    };
+
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    body.style.overscrollBehavior = "none";
+
+    const onTouchMove = (e: TouchEvent) => {
+      const target = e.target;
+      if (!(target instanceof Element)) {
+        e.preventDefault();
+        return;
+      }
+      if (target.closest(allowSelector)) return;
+      e.preventDefault();
+    };
+
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+
+    return () => {
+      document.removeEventListener("touchmove", onTouchMove);
+      html.style.overflow = prev.htmlOverflow;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.overscrollBehavior = prev.bodyOverscroll;
+    };
+  }
 
   const prev = {
     htmlOverflow: html.style.overflow,

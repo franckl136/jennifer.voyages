@@ -4,7 +4,7 @@ import { ContactLink } from "@/components/contact-dialog";
 import { SectionLink } from "@/components/section-link";
 import { lockBodyScroll } from "@/lib/scroll-lock";
 import { Menu, X } from "lucide-react";
-import { useCallback, useEffect, useId } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 
 const nav = [
   { sectionId: "a-propos", label: "Qui suis-je ?" },
@@ -20,6 +20,7 @@ type MobileNavProps = {
 export function MobileNav({ open, onOpenChange }: MobileNavProps) {
   const panelId = useId();
   const close = useCallback(() => onOpenChange(false), [onOpenChange]);
+  const [panelTop, setPanelTop] = useState(0);
 
   useEffect(() => {
     if (!open) return;
@@ -27,12 +28,29 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
       if (e.key === "Escape") close();
     };
     document.addEventListener("keydown", onKey);
-    const unlock = lockBodyScroll();
+    // overflow (pas fixed) : le header sticky reste visible hors du haut de page
+    const unlock = lockBodyScroll({
+      strategy: "overflow",
+      allowSelector: "header, [data-scroll-lock-allow]",
+    });
     return () => {
       document.removeEventListener("keydown", onKey);
       unlock();
     };
   }, [open, close]);
+
+  useEffect(() => {
+    if (!open) return;
+    const syncTop = () => {
+      const header = document.querySelector("header");
+      if (header instanceof HTMLElement) {
+        setPanelTop(header.getBoundingClientRect().bottom);
+      }
+    };
+    syncTop();
+    window.addEventListener("resize", syncTop);
+    return () => window.removeEventListener("resize", syncTop);
+  }, [open]);
 
   return (
     <div className="md:hidden">
@@ -49,7 +67,6 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
 
       {open ? (
         <>
-          {/* Sous le header (z-50) : assombrit la page sans flouter le header / la croix */}
           <button
             type="button"
             className="fixed inset-0 z-40 bg-foreground/30"
@@ -58,7 +75,9 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
           />
           <nav
             id={panelId}
-            className="absolute inset-x-0 top-full z-50 border-b border-brand-primary/10 bg-brand-cream px-4 py-5 shadow-lg sm:px-6"
+            data-scroll-lock-allow
+            style={{ top: panelTop }}
+            className="fixed inset-x-0 z-50 border-b border-brand-primary/10 bg-brand-cream px-4 py-5 shadow-lg sm:px-6"
             aria-label="Navigation mobile"
           >
             <ul className="flex flex-col items-center gap-1">
