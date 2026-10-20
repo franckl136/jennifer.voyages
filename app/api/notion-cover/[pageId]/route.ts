@@ -1,4 +1,3 @@
-import { notionImageResponse } from "@/lib/notion-image-response";
 import {
   fetchFreshCoverUrl,
   isNotionConfigured,
@@ -11,7 +10,10 @@ export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ pageId: string }> };
 
 /**
- * Couverture Notion : octets compressés + cache CDN long sur URL stable.
+ * Redirige vers une URL Notion fraîche (S3).
+ * Le navigateur télécharge directement depuis S3 — bien plus rapide
+ * qu’un double hop next/image → proxy → Notion (surtout en local).
+ * Cache redirect < 1 h (durée de vie des signatures Notion).
  */
 export async function GET(_request: Request, context: RouteContext) {
   if (!isNotionConfigured()) {
@@ -26,7 +28,13 @@ export async function GET(_request: Request, context: RouteContext) {
     if (!url) {
       return new NextResponse("Image introuvable", { status: 404 });
     }
-    return await notionImageResponse(url);
+
+    const res = NextResponse.redirect(url, 307);
+    res.headers.set(
+      "Cache-Control",
+      "public, s-maxage=3000, stale-while-revalidate=600",
+    );
+    return res;
   } catch {
     return new NextResponse("Erreur image", { status: 500 });
   }

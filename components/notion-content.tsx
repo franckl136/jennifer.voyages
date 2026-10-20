@@ -2,7 +2,6 @@ import type {
   BlockObjectResponse,
   RichTextItemResponse,
 } from "@notionhq/client";
-import Image from "next/image";
 import type { ReactNode } from "react";
 
 type BlockWithKids = BlockObjectResponse & {
@@ -194,13 +193,13 @@ function NotionBlock({ block }: { block: BlockWithKids }) {
       return (
         <figure className="my-8 overflow-hidden rounded-2xl border border-border bg-card">
           <div className="relative aspect-[16/10] w-full bg-pastel-mist">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={url}
               alt={caption || "Illustration de l’article"}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 48rem"
-              unoptimized
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
             />
           </div>
           {caption ? (

@@ -3,19 +3,11 @@ import {
   BlogArticleBlocksFallback,
 } from "@/components/blog-article-blocks";
 import {
-  BLOG_COVER_HEIGHT,
-  BLOG_COVER_QUALITY,
-  BLOG_COVER_SIZES,
-  BLOG_COVER_WIDTH,
-  getBlogCoverOptimizedSrc,
-} from "@/lib/blog-cover";
-import {
   getPostBySlug,
   isNotionConfigured,
   listBlogPosts,
 } from "@/lib/notion";
 import { ArrowLeft, Clock } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -106,19 +98,17 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
               <link
                 rel="preload"
                 as="image"
-                href={getBlogCoverOptimizedSrc(post.coverUrl)}
+                href={post.coverUrl}
                 fetchPriority="high"
               />
               <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-pastel-mist shadow-sm sm:aspect-[2/1]">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={post.coverUrl}
                   alt={post.title}
-                  width={BLOG_COVER_WIDTH}
-                  height={BLOG_COVER_HEIGHT}
-                  quality={BLOG_COVER_QUALITY}
-                  sizes={BLOG_COVER_SIZES}
-                  priority
                   className="absolute inset-0 h-full w-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
             </>
