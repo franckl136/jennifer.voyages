@@ -70,6 +70,22 @@ main {
   -webkit-overflow-scrolling: touch;
 }
 
+/* iOS : pas de pastille / highlight autour de − et ✕ */
+.contact-dialog-icon-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+.contact-dialog-icon-btn:focus,
+.contact-dialog-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
+  background: transparent !important;
+}
+
 /**
  * Mobile : feuille plein écran (pas de carte flottante recentrée).
  * Le clavier réduit la zone visible ; seul le contenu interne scroll —

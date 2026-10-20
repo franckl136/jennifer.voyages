@@ -329,20 +329,20 @@ export function ContactDialog() {
             <button
               type="button"
               onClick={minimize}
-              className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-lg text-muted transition-colors [-webkit-tap-highlight-color:transparent] hover:text-foreground active:bg-pastel-mist/70 [@media(hover:hover)]:hover:bg-pastel-mist"
+              className="contact-dialog-icon-btn inline-flex h-11 w-11 touch-manipulation items-center justify-center border-0 bg-transparent text-muted shadow-none hover:text-foreground focus:outline-none focus-visible:text-foreground focus-visible:outline-none active:opacity-50"
               aria-label="Réduire le formulaire"
               title="Réduire"
             >
-              <Minus className="h-5 w-5" aria-hidden />
+              <Minus className="h-5 w-5" strokeWidth={2} aria-hidden />
             </button>
             <button
               type="button"
               onClick={dismiss}
-              className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-lg text-muted transition-colors [-webkit-tap-highlight-color:transparent] hover:text-foreground active:bg-pastel-mist/70 [@media(hover:hover)]:hover:bg-pastel-mist"
+              className="contact-dialog-icon-btn inline-flex h-11 w-11 touch-manipulation items-center justify-center border-0 bg-transparent text-muted shadow-none hover:text-foreground focus:outline-none focus-visible:text-foreground focus-visible:outline-none active:opacity-50"
               aria-label="Fermer le formulaire"
               title="Fermer"
             >
-              <X className="h-5 w-5" aria-hidden />
+              <X className="h-5 w-5" strokeWidth={2} aria-hidden />
             </button>
           </div>
         ) : null}
