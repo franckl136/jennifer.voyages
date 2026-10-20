@@ -7,7 +7,6 @@ import Link from "next/link";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Inspirations",
   description:
     "Carnets de voyage et inspirations de Jennifer & Voyages.",
 };

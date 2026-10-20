@@ -25,9 +25,9 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  // Onglet unique partout — site vitrine, pas besoin de titres de page dans l’onglet
   title: {
-    default: "Jennifer & Voyages",
-    template: "%s | Jennifer & Voyages",
+    absolute: "Jennifer & Voyages",
   },
   description:
     "Itinéraires sur mesure, réservations et conseils pour préparer votre voyage. Écrivez à Jennifer & Voyages.",

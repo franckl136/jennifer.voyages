@@ -32,24 +32,24 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
+  // Onglet = toujours « Jennifer & Voyages » ; le titre article reste pour le partage social
   if (!isNotionConfigured()) {
-    return { title: "Article" };
+    return {};
   }
   try {
     const post = await getPostBySlug(slug);
-    if (!post) return { title: "Article introuvable" };
+    if (!post) return {};
     return {
-      title: post.title,
       description: post.excerpt || post.title,
       openGraph: {
         title: post.title,
         description: post.excerpt || post.title,
-        type: "article",
+        type: "article" as const,
         ...(post.coverUrl ? { images: [{ url: post.coverUrl }] } : {}),
       },
     };
   } catch {
-    return { title: "Article" };
+    return {};
   }
 }
 

@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mentions légales",
   description:
     "Mentions légales, protection des données (RGPD) et conditions générales d’utilisation du site jennifervoyages.fr.",
 };
