@@ -15,8 +15,7 @@ export function ClosingCtaSection() {
               Un projet en tête ?
             </p>
             <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-muted sm:text-lg">
-              Décrivez-moi votre envie en quelques lignes : on regarde ensemble
-              ce qui est possible.
+              Décrivez-moi votre envie en quelques lignes.
             </p>
             <div className="mt-7 flex justify-center">
               <ContactLink

@@ -368,8 +368,8 @@ export function ContactDialog() {
                 Parlons de votre voyage
               </h2>
               <p className="mt-3 text-sm text-muted sm:text-base">
-                Décrivez votre envie en quelques lignes : je vous réponds pour
-                échanger sur la faisabilité et la suite ensemble.
+                Décrivez votre envie en quelques lignes : je vous réponds
+                rapidement.
               </p>
               <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
                 <a

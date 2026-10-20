@@ -46,7 +46,7 @@ export function FaqSection() {
             Les questions que l’on me pose souvent
           </h2>
           <p className="mt-4 text-base text-muted sm:text-lg">
-            Quelques réponses utiles avant de m’écrire.
+            Quelques réponses utiles.
           </p>
         </div>
 
