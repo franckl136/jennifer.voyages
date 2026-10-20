@@ -1,42 +1,33 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import {
+  BLOG_COVER_HEIGHT,
+  BLOG_COVER_QUALITY,
+  BLOG_COVER_SIZES,
+  BLOG_COVER_WIDTH,
+} from "@/lib/blog-cover";
+import Image from "next/image";
+import { useState } from "react";
 
 type BlogCoverImageProps = {
   src: string;
   alt: string;
   className?: string;
-  /** Hero / LCP : pas de fondu, affichage dès que les octets arrivent. */
   priority?: boolean;
 };
 
 /**
- * Couvertures blog. `priority` = article / premières cartes (pas de flash opacity).
- * Grille : léger fondu uniquement si l’image n’est pas déjà en cache.
+ * Couverture via next/image (WebP/AVIF compressés par l’optimizer Vercel).
+ * Même width/quality que la page article → cache partagé.
  */
 export function BlogCoverImage({
   src,
   alt,
-  className = "absolute inset-0 h-full w-full object-cover",
+  className = "object-cover",
   priority = false,
 }: BlogCoverImageProps) {
-  const imgRef = useRef<HTMLImageElement>(null);
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(priority);
-
-  useLayoutEffect(() => {
-    setFailed(false);
-    if (priority) {
-      setLoaded(true);
-      return;
-    }
-    const img = imgRef.current;
-    if (img?.complete && img.naturalWidth > 0) {
-      setLoaded(true);
-    } else {
-      setLoaded(false);
-    }
-  }, [src, priority]);
 
   if (failed) {
     return (
@@ -52,27 +43,24 @@ export function BlogCoverImage({
           aria-hidden
         />
       ) : null}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        ref={imgRef}
-        key={src}
+      <Image
         src={src}
         alt={alt}
-        className={
+        width={BLOG_COVER_WIDTH}
+        height={BLOG_COVER_HEIGHT}
+        quality={BLOG_COVER_QUALITY}
+        sizes={BLOG_COVER_SIZES}
+        priority={priority}
+        className={`absolute inset-0 h-full w-full ${className} ${
           priority
-            ? className
-            : `${className} duration-300 ease-out motion-reduce:transition-none ${
+            ? ""
+            : `duration-300 ease-out motion-reduce:transition-none ${
                 loaded ? "opacity-100" : "opacity-0"
               }`
-        }
+        }`}
         style={
-          priority
-            ? undefined
-            : { transitionProperty: "opacity, transform" }
+          priority ? undefined : { transitionProperty: "opacity, transform" }
         }
-        loading={priority ? "eager" : "lazy"}
-        decoding={priority ? "sync" : "async"}
-        fetchPriority={priority ? "high" : "auto"}
         onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}
       />

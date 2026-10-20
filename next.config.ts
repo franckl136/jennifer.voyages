@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
+    localPatterns: [
+      { pathname: "/api/notion-cover/**" },
+      { pathname: "/api/notion-file/**" },
+      { pathname: "/images/**" },
+    ],
     remotePatterns: [
       {
         protocol: "https",

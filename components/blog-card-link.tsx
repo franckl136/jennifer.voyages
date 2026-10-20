@@ -1,5 +1,6 @@
 "use client";
 
+import { getBlogCoverOptimizedSrc } from "@/lib/blog-cover";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -8,9 +9,15 @@ const warmed = new Set<string>();
 function warmCover(src: string | null | undefined) {
   if (!src || warmed.has(src)) return;
   warmed.add(src);
-  const img = new window.Image();
-  img.decoding = "async";
-  img.src = src;
+  try {
+    const optimized = getBlogCoverOptimizedSrc(src);
+    const img = new window.Image();
+    img.decoding = "async";
+    img.src = optimized;
+  } catch {
+    const img = new window.Image();
+    img.src = src;
+  }
 }
 
 type BlogCardLinkProps = {
@@ -20,10 +27,7 @@ type BlogCardLinkProps = {
   children: ReactNode;
 };
 
-/**
- * Lien carte blog : précharge la couverture au survol / focus / touch
- * pour que l’article l’affiche depuis le cache navigateur.
- */
+/** Précharge la version optimisée Next au survol / touch. */
 export function BlogCardLink({
   href,
   coverUrl,
