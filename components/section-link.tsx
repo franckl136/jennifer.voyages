@@ -1,6 +1,9 @@
 "use client";
 
-import { requestHomeScroll } from "@/lib/home-scroll";
+import {
+  requestHomeScroll,
+  scrollToHomeSection,
+} from "@/lib/home-scroll";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode, MouseEvent } from "react";
@@ -15,7 +18,7 @@ type SectionLinkProps = {
 
 /**
  * Lien vers une section de l’accueil sans # dans l’URL :
- * scroll sur place si déjà à l’accueil, sinon navigation sans remonter en haut.
+ * scroll sous le header sticky, sans remonter en haut de page.
  */
 export function SectionLink({
   sectionId,
@@ -30,14 +33,11 @@ export function SectionLink({
     onNavigate?.();
     if (pathname === "/") {
       e.preventDefault();
-      document
-        .getElementById(sectionId)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToHomeSection(sectionId, "smooth");
       return;
     }
     e.preventDefault();
     requestHomeScroll(sectionId);
-    // scroll: false → évite le flash « haut de page puis descente »
     router.push("/", { scroll: false });
   }
 

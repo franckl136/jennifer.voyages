@@ -1,23 +1,40 @@
 "use client";
 
-import { HOME_SCROLL_KEY } from "@/lib/home-scroll";
+import {
+  HOME_SCROLL_KEY,
+  scrollToHomeSection,
+} from "@/lib/home-scroll";
+import { usePathname } from "next/navigation";
 import { useLayoutEffect } from "react";
 
 /**
- * Au montage de l’accueil : place immédiatement sur la section demandée
- * (sans animation — le smooth après navigation provoquait un saccadement).
+ * Au retour sur l’accueil : place la section demandée juste sous le header
+ * (rejoue à chaque visite de `/`, pas seulement au premier mount).
  */
 export function HomeScroll() {
+  const pathname = usePathname();
+
   useLayoutEffect(() => {
+    if (pathname !== "/") return;
+
     const id = sessionStorage.getItem(HOME_SCROLL_KEY);
     if (!id) return;
     sessionStorage.removeItem(HOME_SCROLL_KEY);
 
-    const el = document.getElementById(id);
-    if (!el) return;
+    // Double rAF : layout / images de section stabilisés après soft-nav
+    let cancelled = false;
+    const frame = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (cancelled) return;
+        scrollToHomeSection(id, "instant");
+      });
+    });
 
-    el.scrollIntoView({ behavior: "instant", block: "start" });
-  }, []);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
 
   return null;
 }
