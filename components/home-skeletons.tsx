@@ -3,7 +3,7 @@
 export function BlogSectionSkeleton() {
   return (
     <section
-      id="blog"
+      data-home-scroll="blog"
       className="scroll-mt-24 bg-gradient-to-b from-pastel-sand/40 to-background py-10 sm:py-14 lg:py-16 sm:scroll-mt-28"
       aria-busy="true"
       aria-label="Chargement des inspirations"
