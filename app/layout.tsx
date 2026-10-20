@@ -18,8 +18,6 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: "#1a2b88",
-  /** Réduit les sauts de layout quand le clavier mobile s’ouvre (Chrome / Android). */
-  interactiveWidget: "resizes-content" as const,
 };
 
 const siteUrl =

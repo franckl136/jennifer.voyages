@@ -27,7 +27,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
       if (e.key === "Escape") close();
     };
     document.addEventListener("keydown", onKey);
-    const unlock = lockBodyScroll("[data-scroll-lock-allow]");
+    const unlock = lockBodyScroll();
     return () => {
       document.removeEventListener("keydown", onKey);
       unlock();
@@ -58,7 +58,6 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
           />
           <nav
             id={panelId}
-            data-scroll-lock-allow
             className="absolute inset-x-0 top-full z-50 border-b border-brand-primary/10 bg-brand-cream px-4 py-5 shadow-lg sm:px-6"
             aria-label="Navigation mobile"
           >

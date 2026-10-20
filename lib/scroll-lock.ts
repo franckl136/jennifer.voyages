@@ -1,37 +1,38 @@
 /**
  * Verrouille le scroll de la page derrière une modale.
- * Évite `position: fixed` sur le body (saccades clavier iOS au changement de champ).
- * Sur tactile : bloque les touchmove hors zone autorisée.
+ * `position: fixed` empêche Safari iOS de faire monter/descendre toute la page
+ * pour « suivre » le champ focus (source classique de saccades).
  */
-export function lockBodyScroll(allowSelector = ".contact-dialog, [data-scroll-lock-allow]") {
+export function lockBodyScroll() {
+  const scrollY = window.scrollY;
   const { body, documentElement: html } = document;
 
   const prev = {
     htmlOverflow: html.style.overflow,
     bodyOverflow: body.style.overflow,
-    bodyOverscroll: body.style.overscrollBehavior,
+    bodyPosition: body.style.position,
+    bodyTop: body.style.top,
+    bodyLeft: body.style.left,
+    bodyRight: body.style.right,
+    bodyWidth: body.style.width,
   };
 
   html.style.overflow = "hidden";
   body.style.overflow = "hidden";
-  body.style.overscrollBehavior = "none";
-
-  const onTouchMove = (e: TouchEvent) => {
-    const target = e.target;
-    if (!(target instanceof Element)) {
-      e.preventDefault();
-      return;
-    }
-    if (target.closest(allowSelector)) return;
-    e.preventDefault();
-  };
-
-  document.addEventListener("touchmove", onTouchMove, { passive: false });
+  body.style.position = "fixed";
+  body.style.top = `-${scrollY}px`;
+  body.style.left = "0";
+  body.style.right = "0";
+  body.style.width = "100%";
 
   return () => {
-    document.removeEventListener("touchmove", onTouchMove);
     html.style.overflow = prev.htmlOverflow;
     body.style.overflow = prev.bodyOverflow;
-    body.style.overscrollBehavior = prev.bodyOverscroll;
+    body.style.position = prev.bodyPosition;
+    body.style.top = prev.bodyTop;
+    body.style.left = prev.bodyLeft;
+    body.style.right = prev.bodyRight;
+    body.style.width = prev.bodyWidth;
+    window.scrollTo(0, scrollY);
   };
 }

@@ -197,30 +197,6 @@ export function ContactDialog() {
     }
   }, [open]);
 
-  /** Suit le visualViewport (clavier iOS) pour éviter le saut / recentrage. */
-  useEffect(() => {
-    if (!open) return;
-    const el = dialogRef.current;
-    const vv = window.visualViewport;
-    if (!el || !vv) return;
-
-    const sync = () => {
-      el.style.setProperty("--vv-height", `${vv.height}px`);
-      el.style.setProperty("--vv-offset-top", `${vv.offsetTop}px`);
-      el.dataset.vvReady = "";
-    };
-    sync();
-    vv.addEventListener("resize", sync);
-    vv.addEventListener("scroll", sync);
-    return () => {
-      vv.removeEventListener("resize", sync);
-      vv.removeEventListener("scroll", sync);
-      delete el.dataset.vvReady;
-      el.style.removeProperty("--vv-height");
-      el.style.removeProperty("--vv-offset-top");
-    };
-  }, [open]);
-
   useEffect(() => {
     const el = dialogRef.current;
     if (!el?.open) return;
@@ -235,6 +211,34 @@ export function ContactDialog() {
       preventScroll: true,
     });
   }, [open, privacyOpen]);
+
+  /** Garde le champ visible en scrollant le dialog, sans faire bouger la page. */
+  useEffect(() => {
+    if (!open) return;
+    const el = dialogRef.current;
+    if (!el) return;
+
+    const onFocusIn = (e: FocusEvent) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!el.contains(target)) return;
+      if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") return;
+
+      requestAnimationFrame(() => {
+        const pad = 20;
+        const fieldRect = target.getBoundingClientRect();
+        const dialogRect = el.getBoundingClientRect();
+        if (fieldRect.bottom > dialogRect.bottom - pad) {
+          el.scrollTop += fieldRect.bottom - dialogRect.bottom + pad;
+        } else if (fieldRect.top < dialogRect.top + pad) {
+          el.scrollTop -= dialogRect.top + pad - fieldRect.top;
+        }
+      });
+    };
+
+    el.addEventListener("focusin", onFocusIn);
+    return () => el.removeEventListener("focusin", onFocusIn);
+  }, [open]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
