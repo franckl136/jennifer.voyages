@@ -29,7 +29,7 @@ export default async function BlogIndexPage() {
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
         <SectionLink sectionId="blog" className={backLinkClass}>
           <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          Précédent
+          Accueil
         </SectionLink>
 
         <header className="mx-auto mt-8 max-w-2xl text-center sm:mt-10">

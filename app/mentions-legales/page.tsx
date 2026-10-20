@@ -16,7 +16,7 @@ export default function MentionsLegalesPage() {
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <Link href="/" className={`mb-2 ${backLinkClass}`}>
           <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          Précédent
+          Accueil
         </Link>
 
         <h1 className="mt-10 text-3xl font-semibold tracking-tight text-foreground">
