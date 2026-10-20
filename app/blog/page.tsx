@@ -26,12 +26,12 @@ export default async function BlogIndexPage() {
 
   return (
     <div className="bg-gradient-to-b from-pastel-sand/40 to-background">
-      {/* Padding identique à la section #blog de l’accueil → pas d’effet d’escalier */}
+      {/* Même rythme vertical que #blog accueil (py-10 / sm:py-14 / lg:py-16) */}
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
         {/* max-w-5xl = même largeur que la grille d’articles → Accueil aligné au bord des cartes */}
         <header className="mx-auto max-w-5xl">
-          {/* Accueil + label Carnets sur la même ligne */}
-          <div className="relative flex min-h-10 items-center justify-center">
+          {/* Accueil + label Carnets : même ligne optique que l’eyebrow accueil */}
+          <div className="relative flex items-center justify-center">
             <SectionLink
               sectionId="blog"
               className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 ${backLinkClass}`}
@@ -44,7 +44,7 @@ export default async function BlogIndexPage() {
             </p>
           </div>
 
-          <div className="mx-auto mt-4 max-w-2xl text-center sm:mt-3">
+          <div className="mx-auto mt-3 max-w-2xl text-center">
             <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Toutes les inspirations
             </h1>
