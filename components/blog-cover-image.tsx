@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 type BlogCoverImageProps = {
   src: string;
   alt: string;
   className?: string;
-  /** Priorité visuelle (premières cartes). */
+  /** Hero / LCP : pas de fondu, affichage dès que les octets arrivent. */
   priority?: boolean;
 };
 
 /**
- * Couvertures blog : fondu à l’apparition, placeholder le temps du chargement.
- * Les URLs Notion passent par `/api/notion-cover` (stables).
+ * Couvertures blog. `priority` = article / premières cartes (pas de flash opacity).
+ * Grille : léger fondu uniquement si l’image n’est pas déjà en cache.
  */
 export function BlogCoverImage({
   src,
@@ -22,20 +22,21 @@ export function BlogCoverImage({
 }: BlogCoverImageProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const [loaded, setLoaded] = useState(priority);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setFailed(false);
-    setLoaded(false);
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setReduceMotion(reduce);
-
+    if (priority) {
+      setLoaded(true);
+      return;
+    }
     const img = imgRef.current;
     if (img?.complete && img.naturalWidth > 0) {
       setLoaded(true);
+    } else {
+      setLoaded(false);
     }
-  }, [src]);
+  }, [src, priority]);
 
   if (failed) {
     return (
@@ -45,9 +46,9 @@ export function BlogCoverImage({
 
   return (
     <>
-      {!loaded ? (
+      {!priority && !loaded ? (
         <div
-          className={`absolute inset-0 bg-pastel-mist${reduceMotion ? "" : " animate-pulse"}`}
+          className="absolute inset-0 animate-pulse bg-pastel-mist motion-reduce:animate-none"
           aria-hidden
         />
       ) : null}
@@ -57,20 +58,20 @@ export function BlogCoverImage({
         key={src}
         src={src}
         alt={alt}
-        className={`${className} ${
-          reduceMotion
-            ? loaded
-              ? "opacity-100"
-              : "opacity-0"
-            : `duration-700 ease-out ${loaded ? "opacity-100" : "opacity-0"}`
-        }`}
+        className={
+          priority
+            ? className
+            : `${className} duration-300 ease-out motion-reduce:transition-none ${
+                loaded ? "opacity-100" : "opacity-0"
+              }`
+        }
         style={
-          reduceMotion
+          priority
             ? undefined
             : { transitionProperty: "opacity, transform" }
         }
         loading={priority ? "eager" : "lazy"}
-        decoding="async"
+        decoding={priority ? "sync" : "async"}
         fetchPriority={priority ? "high" : "auto"}
         onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}

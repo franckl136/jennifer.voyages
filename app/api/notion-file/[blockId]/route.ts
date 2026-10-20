@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ blockId: string }> };
 
-/** Redirection vers URL Notion fraîche pour images / fichiers de blocs. */
+/** Proxy d’octets CDN pour images / fichiers de blocs Notion. */
 export async function GET(_request: Request, context: RouteContext) {
   if (!isNotionConfigured()) {
     return new NextResponse("Notion non configuré", { status: 503 });
@@ -24,12 +24,20 @@ export async function GET(_request: Request, context: RouteContext) {
       return new NextResponse("Fichier introuvable", { status: 404 });
     }
 
-    const res = NextResponse.redirect(url, 307);
-    res.headers.set(
-      "Cache-Control",
-      "public, s-maxage=3000, stale-while-revalidate=600",
-    );
-    return res;
+    const upstream = await fetch(url);
+    if (!upstream.ok || !upstream.body) {
+      return new NextResponse("Fichier indisponible", { status: 502 });
+    }
+
+    const contentType = upstream.headers.get("content-type") || "image/jpeg";
+    return new NextResponse(upstream.body, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Cache-Control":
+          "public, s-maxage=86400, stale-while-revalidate=604800",
+      },
+    });
   } catch {
     return new NextResponse("Erreur fichier", { status: 500 });
   }

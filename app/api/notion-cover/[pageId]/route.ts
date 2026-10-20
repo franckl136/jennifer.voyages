@@ -10,9 +10,8 @@ export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ pageId: string }> };
 
 /**
- * Redirige vers une URL Notion fraîche (S3 signée ~1 h).
- * Plus rapide qu’un proxy d’octets : le navigateur charge directement depuis S3.
- * Cache CDN < 1 h pour limiter les appels Notion.
+ * Proxy d’octets avec cache CDN long sur l’URL stable `/api/notion-cover/…`.
+ * Après le 1er hit, accueil → article réutilise le même cache (plus de flash).
  */
 export async function GET(_request: Request, context: RouteContext) {
   if (!isNotionConfigured()) {
@@ -28,12 +27,20 @@ export async function GET(_request: Request, context: RouteContext) {
       return new NextResponse("Image introuvable", { status: 404 });
     }
 
-    const res = NextResponse.redirect(url, 307);
-    res.headers.set(
-      "Cache-Control",
-      "public, s-maxage=3000, stale-while-revalidate=600",
-    );
-    return res;
+    const upstream = await fetch(url);
+    if (!upstream.ok || !upstream.body) {
+      return new NextResponse("Image indisponible", { status: 502 });
+    }
+
+    const contentType = upstream.headers.get("content-type") || "image/jpeg";
+    return new NextResponse(upstream.body, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Cache-Control":
+          "public, s-maxage=86400, stale-while-revalidate=604800",
+      },
+    });
   } catch {
     return new NextResponse("Erreur image", { status: 500 });
   }

@@ -96,14 +96,23 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
 
         <header className="border-b border-border pb-10">
           {post.coverUrl ? (
-            <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-pastel-mist shadow-sm sm:aspect-[2/1]">
-              <BlogCoverImage
-                src={post.coverUrl}
-                alt={post.title}
-                priority
-                className="absolute inset-0 h-full w-full object-cover"
+            <>
+              {/* Précharge LCP : démarre avant le paint du client component */}
+              <link
+                rel="preload"
+                as="image"
+                href={post.coverUrl}
+                fetchPriority="high"
               />
-            </div>
+              <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-pastel-mist shadow-sm sm:aspect-[2/1]">
+                <BlogCoverImage
+                  src={post.coverUrl}
+                  alt={post.title}
+                  priority
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+            </>
           ) : null}
           {dateLabel ? (
             <p className="mb-3 flex items-center gap-2 text-sm text-muted">
