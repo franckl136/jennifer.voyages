@@ -1,22 +1,22 @@
 "use client";
 
 import { HOME_SCROLL_KEY } from "@/lib/home-scroll";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
-/** Au montage de l’accueil : scroll vers la section demandée (sans #). */
+/**
+ * Au montage de l’accueil : place immédiatement sur la section demandée
+ * (sans animation — le smooth après navigation provoquait un saccadement).
+ */
 export function HomeScroll() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     const id = sessionStorage.getItem(HOME_SCROLL_KEY);
     if (!id) return;
     sessionStorage.removeItem(HOME_SCROLL_KEY);
-    const run = () => {
-      document
-        .getElementById(id)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    requestAnimationFrame(() => {
-      window.setTimeout(run, 50);
-    });
+
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: "instant", block: "start" });
   }, []);
 
   return null;

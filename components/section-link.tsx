@@ -15,7 +15,7 @@ type SectionLinkProps = {
 
 /**
  * Lien vers une section de l’accueil sans # dans l’URL :
- * scroll sur place si déjà à l’accueil, sinon navigation puis scroll.
+ * scroll sur place si déjà à l’accueil, sinon navigation sans remonter en haut.
  */
 export function SectionLink({
   sectionId,
@@ -37,7 +37,8 @@ export function SectionLink({
     }
     e.preventDefault();
     requestHomeScroll(sectionId);
-    router.push("/");
+    // scroll: false → évite le flash « haut de page puis descente »
+    router.push("/", { scroll: false });
   }
 
   return (
