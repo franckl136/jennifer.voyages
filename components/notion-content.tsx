@@ -1,3 +1,4 @@
+import { SoftImage } from "@/components/soft-image";
 import type {
   BlockObjectResponse,
   RichTextItemResponse,
@@ -193,13 +194,9 @@ function NotionBlock({ block }: { block: BlockWithKids }) {
       return (
         <figure className="my-8 overflow-hidden rounded-2xl border border-border bg-card">
           <div className="relative aspect-[16/10] w-full bg-pastel-mist">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <SoftImage
               src={url}
               alt={caption || "Illustration de l’article"}
-              className="absolute inset-0 h-full w-full object-cover"
-              loading="lazy"
-              decoding="async"
             />
           </div>
           {caption ? (

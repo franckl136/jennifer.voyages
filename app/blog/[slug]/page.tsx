@@ -2,6 +2,7 @@ import {
   BlogArticleBlocks,
   BlogArticleBlocksFallback,
 } from "@/components/blog-article-blocks";
+import { SoftImage } from "@/components/soft-image";
 import {
   getPostBySlug,
   isNotionConfigured,
@@ -102,13 +103,10 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
                 fetchPriority="high"
               />
               <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-pastel-mist shadow-sm sm:aspect-[2/1]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <SoftImage
                   src={post.coverUrl}
                   alt={post.title}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  fetchPriority="high"
-                  decoding="async"
+                  priority
                 />
               </div>
             </>
