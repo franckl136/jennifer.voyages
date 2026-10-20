@@ -1,3 +1,6 @@
+/** Présentation longue : hors des carnets, uniquement via le bouton « Qui suis-je ? ». */
+export const PROFILE_POST_SLUG = "quelques-mots-sur-moi";
+
 export const SITE = {
   name: "Jennifer & Voyages",
   email: "contact@jennifervoyages.fr",

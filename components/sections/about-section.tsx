@@ -1,5 +1,8 @@
 import { Reveal } from "@/components/reveal";
+import { PROFILE_POST_SLUG } from "@/lib/site";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function AboutSection() {
   return (
@@ -30,19 +33,27 @@ export function AboutSection() {
               Qui suis-je ?
             </p>
             <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Nouvel envol, même passion : le voyage
+              Une passionnée des voyages
             </h2>
             <div className="mt-5 space-y-4 text-base leading-relaxed text-muted sm:text-lg">
               <p>
-                Après plus de 30 ans en agence de voyages à accompagner de
-                nombreux clients, je me lance dans une nouvelle aventure :
-                celle de Travel Planner.
+                Après plus de 30 ans en agence, j&apos;ai choisi de poursuivre
+                cette belle aventure de manière indépendante, avec bienveillance
+                et toujours le même plaisir à vous conseiller.
               </p>
               <p>
-                Je mets mon expertise au service de vos plus belles envies
-                d&apos;évasion, avec sincérité et bienveillance, pour un voyage
-                pensé avec vous, à votre image.
+                Ma plus belle récompense ? Vous retrouver à votre retour pour
+                partager vos découvertes, vos coups de cœur et vos plus beaux
+                souvenirs.
               </p>
+              <p className="font-medium text-foreground">Jennifer</p>
+              <Link
+                href={`/blog/${PROFILE_POST_SLUG}?from=a-propos`}
+                className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-pastel-mist/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 focus-visible:ring-offset-2"
+              >
+                Quelques mots sur moi
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
             </div>
           </div>
         </Reveal>

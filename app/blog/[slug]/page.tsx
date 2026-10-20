@@ -89,7 +89,12 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-        {from === "accueil" ? (
+        {from === "a-propos" ? (
+          <SectionLink sectionId="a-propos" className={backClass}>
+            <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            Accueil
+          </SectionLink>
+        ) : from === "accueil" ? (
           <SectionLink sectionId="blog" className={backClass}>
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Accueil
