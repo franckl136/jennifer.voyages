@@ -3,7 +3,7 @@
 import { ContactLink } from "@/components/contact-dialog";
 import { SectionLink } from "@/components/section-link";
 import { Menu, X } from "lucide-react";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId } from "react";
 
 const nav = [
   { sectionId: "a-propos", label: "Qui suis-je ?" },
@@ -11,11 +11,14 @@ const nav = [
   { sectionId: "blog", label: "Carnets" },
 ];
 
-export function MobileNav() {
-  const [open, setOpen] = useState(false);
-  const panelId = useId();
+type MobileNavProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 
-  const close = useCallback(() => setOpen(false), []);
+export function MobileNav({ open, onOpenChange }: MobileNavProps) {
+  const panelId = useId();
+  const close = useCallback(() => onOpenChange(false), [onOpenChange]);
 
   useEffect(() => {
     if (!open) return;
@@ -35,20 +38,21 @@ export function MobileNav() {
     <div className="md:hidden">
       <button
         type="button"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-colors hover:border-brand-primary/25 hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
+        className="relative z-[60] inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-foreground shadow-sm transition-colors hover:border-brand-primary/25 hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => onOpenChange(!open)}
       >
         {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
       {open ? (
         <>
+          {/* Sous le header (z-50) : assombrit la page sans flouter le header / la croix */}
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-[2px]"
+            className="fixed inset-0 z-40 bg-foreground/30"
             aria-label="Fermer le menu"
             onClick={close}
           />

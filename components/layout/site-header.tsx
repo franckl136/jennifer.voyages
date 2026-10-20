@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
 import { ContactLink } from "@/components/contact-dialog";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { SectionLink } from "@/components/section-link";
+import { useState } from "react";
 
 const nav = [
   { sectionId: "a-propos", label: "Qui suis-je ?" },
@@ -14,8 +17,16 @@ const navLinkClass =
   "rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40";
 
 export function SiteHeader() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-brand-primary/10 bg-brand-cream/95 backdrop-blur-md supports-[backdrop-filter]:bg-brand-cream/80">
+    <header
+      className={
+        mobileOpen
+          ? "sticky top-0 z-50 border-b border-brand-primary/10 bg-brand-cream"
+          : "sticky top-0 z-50 border-b border-brand-primary/10 bg-brand-cream/95 backdrop-blur-md supports-[backdrop-filter]:bg-brand-cream/80"
+      }
+    >
       <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2 sm:px-6 sm:py-2.5 lg:px-8">
         <Link
           href="/"
@@ -49,7 +60,7 @@ export function SiteHeader() {
           >
             Me contacter
           </ContactLink>
-          <MobileNav />
+          <MobileNav open={mobileOpen} onOpenChange={setMobileOpen} />
         </div>
       </div>
     </header>
