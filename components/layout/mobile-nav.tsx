@@ -33,7 +33,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
     <div className="md:hidden">
       <button
         type="button"
-        className="relative z-[60] inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-foreground shadow-sm transition-colors hover:border-brand-primary/25 hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
+        className="relative z-[60] inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl border border-border bg-card text-foreground shadow-sm transition-colors hover:border-brand-primary/25 hover:bg-brand-primary/10 hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
         aria-expanded={open}
         aria-controls={panelId}

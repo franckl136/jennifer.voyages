@@ -30,7 +30,7 @@ export function ProcessSection() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-sky">
-            Comment ça se passe
+            Comment ça se passe ?
           </p>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             Un accompagnement simple, étape par étape

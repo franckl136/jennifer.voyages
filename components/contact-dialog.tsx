@@ -322,9 +322,8 @@ export function ContactDialog() {
         <div className="sticky top-0 z-40 flex shrink-0 items-center justify-end gap-0.5 border-b border-border/70 bg-card px-2 py-1.5">
           <button
             type="button"
-            onPointerDown={(e) => e.preventDefault()}
             onClick={minimize}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
+            className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
             aria-label="Réduire le formulaire"
             title="Réduire"
           >
@@ -332,9 +331,8 @@ export function ContactDialog() {
           </button>
           <button
             type="button"
-            onPointerDown={(e) => e.preventDefault()}
             onClick={dismiss}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
+            className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
             aria-label="Fermer le formulaire"
             title="Fermer"
           >
@@ -380,8 +378,11 @@ export function ContactDialog() {
             </div>
           ) : null}
 
-          {!privacyOpen ? (
-          <div>
+          {/* hidden+inert (pas unmount) : garde la saisie + formRef sur iOS/Android */}
+          <div
+            className={privacyOpen ? "hidden" : undefined}
+            inert={privacyOpen || undefined}
+          >
             <div className="mx-auto max-w-xl text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-sky">
                 Contact
@@ -514,36 +515,35 @@ export function ContactDialog() {
                   placeholder="Dates envisagées, nombre de voyageurs, budget, envies…"
                 />
               </div>
-              <div className="relative z-10 flex items-start gap-3 pt-2">
+              <div className="relative z-10 flex items-start gap-3 pt-2 text-left text-sm leading-relaxed text-foreground">
                 <input
                   id="contact-privacy"
                   name="privacy"
                   type="checkbox"
                   required
                   disabled={status === "loading"}
-                  className="mt-1 h-6 w-6 shrink-0 rounded border-border text-brand-primary focus:ring-brand-primary disabled:opacity-60"
+                  className="mt-1 h-6 w-6 shrink-0 touch-manipulation rounded border-border text-brand-primary focus:ring-brand-primary disabled:opacity-60"
                 />
-                <div className="min-w-0 flex-1 text-left text-sm leading-relaxed text-foreground">
+                <p className="min-w-0 flex-1 pt-0.5">
                   <label
                     htmlFor="contact-privacy"
-                    className="inline cursor-pointer"
+                    className="cursor-pointer touch-manipulation"
                   >
                     J&apos;accepte que mes données soient traitées conformément
                     à la{" "}
                   </label>
                   <button
                     type="button"
-                    onPointerDown={(e) => e.preventDefault()}
                     onClick={() => {
                       blurActiveField();
                       setPrivacyOpen(true);
                     }}
-                    className="relative z-10 inline py-1 font-medium text-brand-primary underline underline-offset-2 hover:opacity-90"
+                    className="touch-manipulation font-medium text-brand-primary underline underline-offset-2 hover:opacity-90"
                   >
                     politique de confidentialité
                   </button>
                   .
-                </div>
+                </p>
               </div>
               <div className="flex justify-center pt-1">
                 <button
@@ -568,7 +568,6 @@ export function ContactDialog() {
               ) : null}
             </form>
           </div>
-          ) : null}
 
           {privacyOpen ? (
             <div
@@ -579,9 +578,8 @@ export function ContactDialog() {
               <button
                 id="contact-privacy-back"
                 type="button"
-                onPointerDown={(e) => e.preventDefault()}
                 onClick={() => setPrivacyOpen(false)}
-                className={backLinkClass}
+                className={`${backLinkClass} touch-manipulation`}
               >
                 <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
                 Précédent

@@ -1,7 +1,7 @@
 export type ScrollLockOptions = {
   /**
-   * `fixed` — formulaires iOS (bloque le saut clavier).
-   * `overflow` — menus : garde le header sticky visible si on n’est pas en haut de page.
+   * `fixed` — desktop / pointeur fin (bloque aussi le rubber-band).
+   * `overflow` — tactile iOS/Android : pas de position:fixed (évite taps décalés après clavier).
    */
   strategy?: "fixed" | "overflow";
   /** Zones où le touchmove reste autorisé (stratégie overflow). */
