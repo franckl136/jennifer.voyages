@@ -1,4 +1,6 @@
+import { backLinkClass } from "@/lib/back-link";
 import { SITE } from "@/lib/site";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -12,11 +14,9 @@ export default function MentionsLegalesPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-pastel-mist/60"
-        >
-          ← Retour à l’accueil
+        <Link href="/" className={`mb-2 ${backLinkClass}`}>
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Précédent
         </Link>
 
         <h1 className="mt-10 text-3xl font-semibold tracking-tight text-foreground">

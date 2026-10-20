@@ -4,6 +4,7 @@ import {
 } from "@/components/blog-article-blocks";
 import { SectionLink } from "@/components/section-link";
 import { SoftImage } from "@/components/soft-image";
+import { backLinkClass } from "@/lib/back-link";
 import {
   getPostBySlug,
   isNotionConfigured,
@@ -14,8 +15,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-const backClass =
-  "mb-8 inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40";
+const backClass = `mb-8 ${backLinkClass}`;
 
 export const revalidate = 300;
 

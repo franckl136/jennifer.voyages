@@ -1,5 +1,6 @@
 import { BlogPostGrid } from "@/components/blog-post-grid";
 import { SectionLink } from "@/components/section-link";
+import { backLinkClass } from "@/lib/back-link";
 import { isNotionConfigured, listBlogPosts } from "@/lib/notion";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
@@ -26,10 +27,7 @@ export default async function BlogIndexPage() {
   return (
     <div className="bg-gradient-to-b from-pastel-sand/40 to-background">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-        <SectionLink
-          sectionId="blog"
-          className="inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40"
-        >
+        <SectionLink sectionId="blog" className={backLinkClass}>
           <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
           Précédent
         </SectionLink>

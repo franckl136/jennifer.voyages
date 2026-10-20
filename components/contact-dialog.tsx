@@ -1,5 +1,6 @@
 "use client";
 
+import { backLinkClass } from "@/lib/back-link";
 import { SITE, whatsappHref } from "@/lib/site";
 import { ArrowLeft, MessageCircle, Minus, Phone, Send, X } from "lucide-react";
 import Link from "next/link";
@@ -547,10 +548,10 @@ export function ContactDialog() {
                 id="contact-privacy-back"
                 type="button"
                 onClick={() => setPrivacyOpen(false)}
-                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-pastel-mist/60"
+                className={backLinkClass}
               >
-                <ArrowLeft className="h-4 w-4" aria-hidden />
-                Retour au formulaire
+                <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                Précédent
               </button>
               <h2
                 id={privacyTitleId}
