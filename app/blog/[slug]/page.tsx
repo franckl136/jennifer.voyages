@@ -97,7 +97,7 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
         ) : (
           <Link href="/blog" className={backClass}>
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Inspirations
+            Articles
           </Link>
         )}
 

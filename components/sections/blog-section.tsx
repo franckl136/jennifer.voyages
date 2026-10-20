@@ -66,7 +66,7 @@ export async function BlogSection() {
                   href="/blog"
                   className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-primary underline-offset-4 hover:underline"
                 >
-                  Toutes les inspirations
+                  Tous les articles
                   <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               </div>
