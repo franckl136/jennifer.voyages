@@ -2,13 +2,13 @@ import {
   BlogArticleBlocks,
   BlogArticleBlocksFallback,
 } from "@/components/blog-article-blocks";
+import { BlogCoverImage } from "@/components/blog-cover-image";
 import {
   getPostBySlug,
   isNotionConfigured,
   listBlogPosts,
 } from "@/lib/notion";
 import { ArrowLeft, Clock } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -97,14 +97,11 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
         <header className="border-b border-border pb-10">
           {post.coverUrl ? (
             <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl border border-border bg-pastel-mist shadow-sm sm:aspect-[2/1]">
-              <Image
+              <BlogCoverImage
                 src={post.coverUrl}
                 alt={post.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 48rem"
                 priority
-                unoptimized
+                className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
           ) : null}

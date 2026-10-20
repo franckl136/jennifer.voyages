@@ -362,9 +362,9 @@ export function ContactDialog() {
               </p>
               <h2
                 id={titleId}
-                className="mt-2 text-balance pr-20 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+                className="mt-2 text-xl font-semibold tracking-tight text-foreground sm:text-2xl md:text-3xl"
               >
-                Parlons de votre prochain voyage
+                Parlons de votre voyage
               </h2>
               <p className="mt-3 text-sm text-muted sm:text-base">
                 Décrivez votre envie en quelques lignes : je vous réponds pour

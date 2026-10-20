@@ -1,5 +1,5 @@
+import { BlogCoverImage } from "@/components/blog-cover-image";
 import { ArrowUpRight, Clock } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 export type BlogCardPost = {
@@ -20,7 +20,7 @@ export function BlogPostGrid({
 }) {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-wrap justify-center gap-6">
-      {posts.map((post) => (
+      {posts.map((post, index) => (
         <Link
           key={post.id}
           href={
@@ -32,13 +32,11 @@ export function BlogPostGrid({
         >
           <div className="relative aspect-[16/10] overflow-hidden bg-pastel-mist">
             {post.coverUrl ? (
-              <Image
+              <BlogCoverImage
                 src={post.coverUrl}
                 alt={post.title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 33vw"
-                unoptimized
+                priority={index < 3}
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             ) : (
               <div
