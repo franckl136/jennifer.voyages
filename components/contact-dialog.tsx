@@ -117,16 +117,23 @@ export function ContactDialog() {
     setOpen(true);
   }, [ensureHash]);
 
+  const blurActiveField = useCallback(() => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+  }, []);
+
   /** Réduit le formulaire : l’icône Message n’apparaît que s’il y a une saisie. */
   const minimize = useCallback(() => {
+    blurActiveField();
     setPrivacyOpen(false);
     setConfirmDismiss(false);
     setMinimized(formHasDraft(formRef.current));
     stripHash();
     setOpen(false);
-  }, [stripHash]);
+  }, [blurActiveField, stripHash]);
 
   const clearAndClose = useCallback(() => {
+    blurActiveField();
     setPrivacyOpen(false);
     setConfirmDismiss(false);
     setMinimized(false);
@@ -135,16 +142,17 @@ export function ContactDialog() {
     formRef.current?.reset();
     stripHash();
     setOpen(false);
-  }, [stripHash]);
+  }, [blurActiveField, stripHash]);
 
   /** Ferme tout et vide le formulaire (demande confirmation s’il y a une saisie). */
   const dismiss = useCallback(() => {
+    blurActiveField();
     if (formHasDraft(formRef.current)) {
       setConfirmDismiss(true);
       return;
     }
     clearAndClose();
-  }, [clearAndClose]);
+  }, [blurActiveField, clearAndClose]);
 
   useEffect(() => {
     const syncFromHash = () => {
@@ -186,7 +194,13 @@ export function ContactDialog() {
     if (open) {
       closingRef.current = false;
       if (!el.open) el.showModal();
-      const unlock = lockBodyScroll();
+      // overflow sur tactile : évite le décalage des taps iOS après fermeture clavier
+      const coarse =
+        typeof window !== "undefined" &&
+        window.matchMedia("(pointer: coarse)").matches;
+      const unlock = lockBodyScroll({
+        strategy: coarse ? "overflow" : "fixed",
+      });
       return unlock;
     }
     setPrivacyOpen(false);
@@ -197,48 +211,25 @@ export function ContactDialog() {
     }
   }, [open]);
 
+  // Autofocus clavier désactivé sur tactile (sinon impossible de fermer / cocher après).
   useEffect(() => {
+    if (!open || privacyOpen) return;
     const el = dialogRef.current;
     if (!el?.open) return;
     el.scrollTop = 0;
-    if (privacyOpen) {
-      el.querySelector<HTMLButtonElement>("#contact-privacy-back")?.focus({
-        preventScroll: true,
-      });
-      return;
-    }
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    if (coarse) return;
     el.querySelector<HTMLInputElement>("#contact-name")?.focus({
       preventScroll: true,
     });
   }, [open, privacyOpen]);
 
-  /** Garde le champ visible en scrollant le dialog, sans faire bouger la page. */
   useEffect(() => {
-    if (!open) return;
-    const el = dialogRef.current;
-    if (!el) return;
-
-    const onFocusIn = (e: FocusEvent) => {
-      const target = e.target;
-      if (!(target instanceof HTMLElement)) return;
-      if (!el.contains(target)) return;
-      if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") return;
-
-      requestAnimationFrame(() => {
-        const pad = 20;
-        const fieldRect = target.getBoundingClientRect();
-        const dialogRect = el.getBoundingClientRect();
-        if (fieldRect.bottom > dialogRect.bottom - pad) {
-          el.scrollTop += fieldRect.bottom - dialogRect.bottom + pad;
-        } else if (fieldRect.top < dialogRect.top + pad) {
-          el.scrollTop -= dialogRect.top + pad - fieldRect.top;
-        }
-      });
-    };
-
-    el.addEventListener("focusin", onFocusIn);
-    return () => el.removeEventListener("focusin", onFocusIn);
-  }, [open]);
+    if (!open || !privacyOpen) return;
+    dialogRef.current
+      ?.querySelector<HTMLButtonElement>("#contact-privacy-back")
+      ?.focus({ preventScroll: true });
+  }, [open, privacyOpen]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -327,28 +318,31 @@ export function ContactDialog() {
           backdropPointerDownRef.current = false;
         }}
       >
-        <div className="relative px-4 py-5 sm:px-8 sm:py-8">
-          <div className="absolute right-2 top-2 z-30 flex items-center gap-0.5 sm:right-3 sm:top-3">
-            <button
-              type="button"
-              onClick={minimize}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground sm:h-10 sm:w-10"
-              aria-label="Réduire le formulaire"
-              title="Réduire"
-            >
-              <Minus className="h-5 w-5" aria-hidden />
-            </button>
-            <button
-              type="button"
-              onClick={dismiss}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground sm:h-10 sm:w-10"
-              aria-label="Fermer le formulaire"
-              title="Fermer"
-            >
-              <X className="h-5 w-5" aria-hidden />
-            </button>
-          </div>
+        {/* Barre sticky : reste tappable même après ouverture du clavier iOS */}
+        <div className="sticky top-0 z-40 flex shrink-0 items-center justify-end gap-0.5 border-b border-border/70 bg-card px-2 py-1.5">
+          <button
+            type="button"
+            onPointerDown={(e) => e.preventDefault()}
+            onClick={minimize}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
+            aria-label="Réduire le formulaire"
+            title="Réduire"
+          >
+            <Minus className="h-5 w-5" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onPointerDown={(e) => e.preventDefault()}
+            onClick={dismiss}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-pastel-mist hover:text-foreground"
+            aria-label="Fermer le formulaire"
+            title="Fermer"
+          >
+            <X className="h-5 w-5" aria-hidden />
+          </button>
+        </div>
 
+        <div className="relative px-4 py-5 sm:px-8 sm:py-8">
           {confirmDismiss ? (
             <div
               className="absolute inset-0 z-20 flex items-center justify-center bg-card/95 px-5 py-6 backdrop-blur-[1px] sm:px-8"
@@ -386,7 +380,8 @@ export function ContactDialog() {
             </div>
           ) : null}
 
-          <div className={privacyOpen ? "invisible h-0 overflow-hidden" : ""}>
+          {!privacyOpen ? (
+          <div>
             <div className="mx-auto max-w-xl text-center">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-sky">
                 Contact
@@ -433,7 +428,6 @@ export function ContactDialog() {
               ref={formRef}
               onSubmit={handleSubmit}
               className="relative mx-auto mt-6 max-w-xl space-y-4"
-              inert={privacyOpen || undefined}
             >
               <div className="sr-only" aria-hidden>
                 <label htmlFor="contact-website">Site web</label>
@@ -520,24 +514,31 @@ export function ContactDialog() {
                   placeholder="Dates envisagées, nombre de voyageurs, budget, envies…"
                 />
               </div>
-              <div className="flex gap-3 pt-1">
+              <div className="relative z-10 flex items-start gap-3 pt-2">
                 <input
                   id="contact-privacy"
                   name="privacy"
                   type="checkbox"
                   required
                   disabled={status === "loading"}
-                  className="mt-0.5 h-5 w-5 shrink-0 rounded border-border text-brand-primary focus:ring-brand-primary disabled:opacity-60"
+                  className="mt-1 h-6 w-6 shrink-0 rounded border-border text-brand-primary focus:ring-brand-primary disabled:opacity-60"
                 />
-                <div className="text-left text-sm leading-relaxed text-foreground">
-                  <label htmlFor="contact-privacy" className="cursor-pointer">
+                <div className="min-w-0 flex-1 text-left text-sm leading-relaxed text-foreground">
+                  <label
+                    htmlFor="contact-privacy"
+                    className="inline cursor-pointer"
+                  >
                     J&apos;accepte que mes données soient traitées conformément
                     à la{" "}
                   </label>
                   <button
                     type="button"
-                    onClick={() => setPrivacyOpen(true)}
-                    className="font-medium text-brand-primary underline underline-offset-2 hover:opacity-90"
+                    onPointerDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      blurActiveField();
+                      setPrivacyOpen(true);
+                    }}
+                    className="relative z-10 inline py-1 font-medium text-brand-primary underline underline-offset-2 hover:opacity-90"
                   >
                     politique de confidentialité
                   </button>
@@ -567,6 +568,7 @@ export function ContactDialog() {
               ) : null}
             </form>
           </div>
+          ) : null}
 
           {privacyOpen ? (
             <div
@@ -577,6 +579,7 @@ export function ContactDialog() {
               <button
                 id="contact-privacy-back"
                 type="button"
+                onPointerDown={(e) => e.preventDefault()}
                 onClick={() => setPrivacyOpen(false)}
                 className={backLinkClass}
               >
@@ -585,7 +588,7 @@ export function ContactDialog() {
               </button>
               <h2
                 id={privacyTitleId}
-                className="mt-5 text-balance pr-20 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+                className="mt-5 text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
               >
                 Politique de confidentialité (RGPD)
               </h2>
