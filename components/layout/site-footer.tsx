@@ -32,38 +32,44 @@ export function SiteFooter() {
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
               Navigation
             </p>
-            <ul className="mt-3 flex flex-col items-center gap-0.5 text-sm">
-              <li>
-                <SectionLink sectionId="a-propos" className={footerNavClass}>
-                  Qui suis-je ?
-                </SectionLink>
-              </li>
-              <li>
-                <SectionLink sectionId="services" className={footerNavClass}>
-                  Mes services
-                </SectionLink>
-              </li>
-              <li>
-                <SectionLink sectionId="blog" className={footerNavClass}>
-                  Carnets
-                </SectionLink>
-              </li>
-              <li>
-                <SectionLink sectionId="parcours" className={footerNavClass}>
-                  Le parcours
-                </SectionLink>
-              </li>
-              <li>
-                <SectionLink sectionId="faq" className={footerNavClass}>
-                  FAQ
-                </SectionLink>
-              </li>
-              <li>
-                <ContactLink source="footer" className={footerNavClass}>
-                  Me contacter
-                </ContactLink>
-              </li>
-            </ul>
+            <div className="relative mt-3">
+              <div
+                className="pointer-events-none absolute inset-y-1 left-1/2 w-px -translate-x-1/2 bg-border"
+                aria-hidden
+              />
+              <ul className="mx-auto grid w-fit grid-cols-2 gap-x-3 gap-y-0.5 justify-items-center text-sm sm:gap-x-4 md:gap-x-5">
+                <li>
+                  <SectionLink sectionId="a-propos" className={footerNavClass}>
+                    Qui suis-je ?
+                  </SectionLink>
+                </li>
+                <li>
+                  <SectionLink sectionId="parcours" className={footerNavClass}>
+                    Le parcours
+                  </SectionLink>
+                </li>
+                <li>
+                  <SectionLink sectionId="services" className={footerNavClass}>
+                    Mes services
+                  </SectionLink>
+                </li>
+                <li>
+                  <SectionLink sectionId="faq" className={footerNavClass}>
+                    FAQ
+                  </SectionLink>
+                </li>
+                <li>
+                  <SectionLink sectionId="blog" className={footerNavClass}>
+                    Carnets
+                  </SectionLink>
+                </li>
+                <li>
+                  <ContactLink source="footer" className={footerNavClass}>
+                    Me contacter
+                  </ContactLink>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="flex flex-col items-center">
