@@ -21,9 +21,9 @@ export function clearHomeScroll() {
   sessionStorage.removeItem(HOME_SCROLL_KEY);
 }
 
-/** Hauteur réelle du header sticky (évite le décalage Carnets). */
+/** Hauteur réelle du header fixed (évite le décalage Carnets). */
 function stickyHeaderHeight() {
-  const header = document.querySelector("header.sticky");
+  const header = document.querySelector("header");
   if (header instanceof HTMLElement) {
     return header.getBoundingClientRect().height;
   }

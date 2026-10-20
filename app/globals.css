@@ -40,13 +40,17 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6.75rem;
+  scroll-padding-top: var(--site-header-height, 6.75rem);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+/* clip ici et non sur body : overflow sur body casse position:sticky/fixed ancêtres */
+main {
   overflow-x: clip;
 }
 
