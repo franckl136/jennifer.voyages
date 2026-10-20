@@ -32,7 +32,7 @@ export default async function BlogIndexPage() {
         <header className="relative mx-auto max-w-5xl">
           <SectionLink
             sectionId="blog"
-            className={`absolute left-0 top-0 z-10 ${backLinkClass} min-h-0 py-0`}
+            className={`absolute left-0 top-0 z-10 ${backLinkClass}`}
           >
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Accueil

@@ -19,7 +19,7 @@ export default function NotFound() {
           href="/"
           className="inline-flex rounded-full bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90"
         >
-          Retour à l&apos;accueil
+          Accueil
         </Link>
         <ContactLink
           source="page-404"

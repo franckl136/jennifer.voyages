@@ -1,5 +1,7 @@
 "use client";
 
+import { backLinkClass } from "@/lib/back-link";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function Error({
@@ -20,7 +22,7 @@ export default function Error({
         Le chargement de cette page a échoué. Vous pouvez réessayer, ou revenir
         à l&apos;accueil.
       </p>
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+      <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
         <button
           type="button"
           onClick={() => reset()}
@@ -28,11 +30,9 @@ export default function Error({
         >
           Réessayer
         </button>
-        <Link
-          href="/"
-          className="inline-flex rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-pastel-mist/60"
-        >
-          Retour à l&apos;accueil
+        <Link href="/" className={backLinkClass}>
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Accueil
         </Link>
       </div>
     </div>
