@@ -12,7 +12,7 @@ export function HeroSection() {
             ma passion.
           </h1>
           <p className="max-w-2xl text-base leading-relaxed text-brand-primary sm:text-lg">
-            Passionnée, j&apos;imagine avec vous des{" "}
+            J&apos;imagine avec vous des{" "}
             <strong className="font-semibold">voyages sur mesure</strong>,
             pensés dans les{" "}
             <strong className="font-semibold">moindres détails</strong>. Au
