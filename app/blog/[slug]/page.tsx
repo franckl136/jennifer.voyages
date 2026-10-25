@@ -1,37 +1,36 @@
+import { ArticleBackLink } from "@/components/article-back-link";
 import {
   BlogArticleBlocks,
   BlogArticleBlocksFallback,
 } from "@/components/blog-article-blocks";
-import { SectionLink } from "@/components/section-link";
 import { SoftImage } from "@/components/soft-image";
-import { backLinkClass } from "@/lib/back-link";
 import {
   getPostBySlug,
   isNotionConfigured,
   listBlogPosts,
 } from "@/lib/notion";
-import { ArrowLeft, Clock } from "lucide-react";
-import Link from "next/link";
+import { PROFILE_POST_SLUG } from "@/lib/site";
+import { Clock } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
-const backClass = `mb-8 ${backLinkClass}`;
 
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  if (!isNotionConfigured()) return [];
+  if (!isNotionConfigured()) return [{ slug: PROFILE_POST_SLUG }];
   try {
     const posts = await listBlogPosts();
-    return posts.map((p) => ({ slug: p.slug }));
+    const slugs = posts.map((p) => p.slug);
+    // Exclu des carnets, mais pré-généré comme les autres articles.
+    if (!slugs.includes(PROFILE_POST_SLUG)) slugs.push(PROFILE_POST_SLUG);
+    return slugs.map((slug) => ({ slug }));
   } catch {
-    return [];
+    return [{ slug: PROFILE_POST_SLUG }];
   }
 }
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ from?: string }>;
 };
 
 export async function generateMetadata({ params }: Props) {
@@ -59,9 +58,8 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function BlogArticlePage({ params, searchParams }: Props) {
+export default async function BlogArticlePage({ params }: Props) {
   const { slug } = await params;
-  const { from } = await searchParams;
 
   if (!isNotionConfigured()) {
     notFound();
@@ -89,22 +87,13 @@ export default async function BlogArticlePage({ params, searchParams }: Props) {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-        {from === "a-propos" ? (
-          <SectionLink sectionId="a-propos" className={backClass}>
-            <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Accueil
-          </SectionLink>
-        ) : from === "accueil" ? (
-          <SectionLink sectionId="blog" className={backClass}>
-            <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Accueil
-          </SectionLink>
-        ) : (
-          <Link href="/blog" className={backClass}>
-            <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            Articles
-          </Link>
-        )}
+        <Suspense
+          fallback={
+            <div className="mb-8 h-10 w-28 animate-pulse rounded bg-pastel-mist" />
+          }
+        >
+          <ArticleBackLink />
+        </Suspense>
 
         <header className="border-b border-border pb-10">
           {post.coverUrl ? (

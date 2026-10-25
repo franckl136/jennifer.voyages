@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 const warmed = new Set<string>();
 
@@ -11,6 +11,14 @@ function warmCover(src: string | null | undefined) {
   const img = new window.Image();
   img.decoding = "async";
   img.src = src;
+}
+
+/** Démarre le téléchargement d’une couverture déjà connue, sans attendre le clic. */
+export function CoverWarmup({ src }: { src: string }) {
+  useEffect(() => {
+    warmCover(src);
+  }, [src]);
+  return null;
 }
 
 type BlogCardLinkProps = {

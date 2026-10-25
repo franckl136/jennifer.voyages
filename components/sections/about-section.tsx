@@ -1,8 +1,10 @@
+import { ProfileCoverPrefetch } from "@/components/profile-cover-prefetch";
 import { Reveal } from "@/components/reveal";
 import { PROFILE_POST_SLUG } from "@/lib/site";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export function AboutSection() {
   return (
@@ -46,11 +48,15 @@ export function AboutSection() {
               <p className="font-medium text-foreground">Jennifer</p>
               <Link
                 href={`/blog/${PROFILE_POST_SLUG}?from=a-propos`}
+                prefetch
                 className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-pastel-mist/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 focus-visible:ring-offset-2"
               >
                 Mon parcours, ma vision
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
+              <Suspense fallback={null}>
+                <ProfileCoverPrefetch />
+              </Suspense>
             </div>
           </div>
         </Reveal>
