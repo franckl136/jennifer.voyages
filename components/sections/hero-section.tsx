@@ -11,18 +11,27 @@ export function HeroSection() {
             <br />
             ma passion.
           </h1>
-          <p className="max-w-2xl text-base leading-relaxed text-brand-primary sm:text-lg">
-            J&apos;imagine avec vous des{" "}
-            <strong className="font-semibold">voyages sur mesure</strong>,
-            pensés dans les{" "}
-            <strong className="font-semibold">moindres détails</strong>. Au
-            fil de mes expériences, j&apos;ai appris qu&apos;un beau voyage ne
-            se résume pas à une destination : c&apos;est avant tout{" "}
-            <strong className="font-semibold">
-              une envie, une émotion, une rencontre ou un rêve
-            </strong>{" "}
-            que l&apos;on souhaite réaliser.
-          </p>
+          <div className="max-w-2xl space-y-4 text-base leading-relaxed text-brand-primary sm:space-y-5 sm:text-lg">
+            <p>
+              Au fil de mes expériences, j&apos;ai appris qu&apos;un beau
+              voyage ne se résume pas à une destination : c&apos;est avant
+              tout{" "}
+              <strong className="font-semibold">
+                une envie, une émotion, une rencontre ou un rêve
+              </strong>{" "}
+              que l&apos;on souhaite réaliser.
+            </p>
+            <p>
+              Parce que les vacances sont des moments précieux et que les
+              voyages d&apos;aujourd&apos;hui deviennent les souvenirs de
+              demain, chaque envie d&apos;évasion mérite toute notre
+              attention.
+            </p>
+            <p className="font-medium">
+              Et si nous donnions ensemble vie à vos prochaines envies
+              d&apos;ailleurs ?
+            </p>
+          </div>
         </div>
 
         <div className="relative mx-auto w-full max-w-2xl">

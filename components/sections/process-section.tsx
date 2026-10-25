@@ -4,20 +4,26 @@ const steps = [
   {
     title: "Premier contact",
     description:
-      "Vous me parlez de vos envies, de votre rythme et de votre budget. Je prends le temps de comprendre ce qui compte vraiment pour vous.",
+      "Je prends le temps de découvrir votre projet, d’écouter vos envies, et de comprendre vos attentes pour vous guider vers les solutions les plus adaptées à vos besoins et à votre budget.",
     tint: "bg-pastel-mist text-accent-sky",
   },
   {
-    title: "Pistes et ajustements",
+    title: "Suggestions & ajustements",
     description:
-      "Je vous présente des pistes concrètes. On les discute, on les ajuste, jusqu’à ce que le projet vous ressemble vraiment.",
+      "Je vous soumets des propositions, nos échanges permettent ensuite de les affiner progressivement pour aboutir à un projet cohérent.",
     tint: "bg-pastel-blush text-accent-coral",
+  },
+  {
+    title: "Finalisation du projet",
+    description:
+      "Après validation de l’offre proposée, le contrat de vente vous est envoyé afin de procéder au paiement.",
+    tint: "bg-pastel-sage text-accent-mint",
   },
   {
     title: "Départ en toute confiance",
     description:
-      "Une fois tout en place, vous avez un voyage clair et prêt. Il ne vous reste plus qu’à profiter du départ.",
-    tint: "bg-pastel-sage text-accent-mint",
+      "Je suis votre dossier jusqu’au jour du départ, et je reste joignable si un imprévu se présente.",
+    tint: "bg-pastel-sand text-accent-lilac",
   },
 ];
 
@@ -40,7 +46,7 @@ export function ProcessSection() {
           </p>
         </div>
 
-        <ol className="mx-auto mt-10 grid w-full max-w-5xl gap-4 sm:mt-14 sm:gap-6 md:grid-cols-3 lg:gap-8">
+        <ol className="mx-auto mt-10 grid w-full max-w-5xl gap-4 sm:mt-14 sm:grid-cols-2 sm:gap-6 lg:gap-8">
           {steps.map((step, index) => (
             <li key={step.title} className="h-full">
               <Reveal delayMs={index * 70}>

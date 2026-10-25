@@ -9,20 +9,20 @@ const SLIDES = [
     alt: "Lac de Braies, dans les Dolomites, en Italie",
   },
   {
-    src: "/images/paysages/savane.jpg",
-    alt: "Acacia au coucher du soleil, dans la savane d’Afrique de l’Est",
+    src: "/images/paysages/savane-elephants.jpg",
+    alt: "Éléphants dans la savane, au coucher du soleil",
   },
   {
     src: "/images/paysages/rizieres.jpg",
     alt: "Rizières de Tegallalang, à Bali, en Indonésie",
   },
   {
-    src: "/images/paysages/oceanie.jpg",
-    alt: "Uluru, dans le désert rouge d’Australie",
+    src: "/images/paysages/maldives.jpg",
+    alt: "Villas sur pilotis, dans un lagon des Maldives",
   },
   {
-    src: "/images/paysages/amerique.jpg",
-    alt: "Lac Moraine, à Banff, au Canada",
+    src: "/images/paysages/monument-valley.jpg",
+    alt: "Monument Valley, à la frontière de l’Arizona et de l’Utah",
   },
   {
     src: "/images/paysages/machu.jpg",

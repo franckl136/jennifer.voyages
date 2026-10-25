@@ -1,26 +1,26 @@
 import { Reveal } from "@/components/reveal";
-import { BookOpen, MapPinned, Ticket } from "lucide-react";
+import { Coffee, Globe, Ticket } from "lucide-react";
 
 const services = [
   {
-    title: "Conception d’itinéraires",
+    title: "Le choix de votre voyage",
     description:
-      "On compose les journées à votre rythme : le temps de profiter, des trajets réalistes, et des idées selon que vous aimiez la ville, la route ou les journées plus calmes.",
-    icon: MapPinned,
+      "Quelles que soient vos envies de voyage, je vous accompagne dans tous vos projets : circuits organisés ou privatifs, séjours, croisières, billetterie, voyages sur mesure… Je vous propose l’ensemble des prestations d’une agence de voyages, vers toutes les destinations du monde.",
+    icon: Globe,
     tint: "bg-pastel-mist text-accent-sky",
   },
   {
     title: "Réservation & logistique",
     description:
-      "Je cherche les hébergements et les transports qui vous conviennent, et je veille aux horaires comme aux correspondances, pour une arrivée en douceur.",
+      "J’effectue les réservations des prestations choisies. Mon agence partenaire se charge ensuite de rédiger le contrat de vente.",
     icon: Ticket,
     tint: "bg-pastel-blush text-accent-coral",
   },
   {
-    title: "Conseils personnalisés",
+    title: "La remise des documents",
     description:
-      "Quelques adresses choisies, ce qu’il vaut mieux laisser de côté, et de petites astuces pour savourer le voyage sans courir d’un lieu à l’autre.",
-    icon: BookOpen,
+      "Quelques jours avant votre départ, je vous contacte afin de vous remettre vos documents de voyage en main propre, autour d’un café, dans un lieu public ou directement à votre domicile.",
+    icon: Coffee,
     tint: "bg-pastel-sage text-accent-mint",
   },
 ];
@@ -37,12 +37,8 @@ export function ServicesSection() {
             Mes services
           </p>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Ce que je prends en charge
+            Les prestations que je vous propose
           </h2>
-          <p className="mt-4 text-base text-muted sm:text-lg">
-            L’itinéraire, la logistique et les bons conseils : pour que vous
-            gardiez l’envie, pas la charge mentale.
-          </p>
         </div>
 
         <ul className="mx-auto mt-10 grid w-full max-w-5xl gap-4 sm:mt-14 sm:gap-6 md:grid-cols-3 lg:gap-8">
