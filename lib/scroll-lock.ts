@@ -6,7 +6,31 @@ export type ScrollLockOptions = {
   strategy?: "fixed" | "overflow";
   /** Zones où le touchmove reste autorisé (stratégie overflow). */
   allowSelector?: string;
+  /**
+   * Position à rétablir. À passer si le document a déjà bougé
+   * (showModal, ancre #contact) avant l’appel.
+   */
+  scrollY?: number;
 };
+
+/** Annule `scroll-behavior: smooth` le temps d’un showModal / close / scrollTo. */
+export function pinScrollBehavior() {
+  const html = document.documentElement;
+  const previous = html.style.scrollBehavior;
+  html.style.scrollBehavior = "auto";
+  return () => {
+    html.style.scrollBehavior = previous;
+  };
+}
+
+/** Restaure le scroll sans animation (le smooth du html envoie sinon en haut ou en bas). */
+export function restoreWindowScroll(scrollY: number) {
+  const html = document.documentElement;
+  const previous = html.style.scrollBehavior;
+  html.style.scrollBehavior = "auto";
+  window.scrollTo({ top: scrollY, left: 0, behavior: "instant" });
+  html.style.scrollBehavior = previous;
+}
 
 /**
  * Verrouille le scroll de la page derrière une modale / un menu.
@@ -17,7 +41,7 @@ export function lockBodyScroll(options: ScrollLockOptions = {}) {
     options.allowSelector ?? ".contact-dialog, [data-scroll-lock-allow]";
 
   const { body, documentElement: html } = document;
-  const scrollY = window.scrollY;
+  const scrollY = options.scrollY ?? window.scrollY;
 
   if (strategy === "overflow") {
     const prev = {
@@ -76,6 +100,6 @@ export function lockBodyScroll(options: ScrollLockOptions = {}) {
     body.style.left = prev.bodyLeft;
     body.style.right = prev.bodyRight;
     body.style.width = prev.bodyWidth;
-    window.scrollTo(0, scrollY);
+    restoreWindowScroll(scrollY);
   };
 }

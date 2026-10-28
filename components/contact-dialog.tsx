@@ -1,7 +1,11 @@
 "use client";
 
 import { backLinkClass } from "@/lib/back-link";
-import { lockBodyScroll } from "@/lib/scroll-lock";
+import {
+  lockBodyScroll,
+  pinScrollBehavior,
+  restoreWindowScroll,
+} from "@/lib/scroll-lock";
 import { SITE, whatsappHref } from "@/lib/site";
 import { ArrowLeft, MessageCircle, Minus, Phone, Send, X } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +16,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -20,6 +25,24 @@ const fieldClass =
   "w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground outline-none ring-foreground/10 placeholder:text-muted focus:ring-2 disabled:opacity-60";
 
 const CONTACT_EVENT = "jv-open-contact";
+
+let suspendedScrollRestoration: ScrollRestoration | null = null;
+
+/** Le retour historique ne doit pas réappliquer un scroll (souvent le bas de page). */
+function suspendScrollRestoration() {
+  if (!("scrollRestoration" in history)) return;
+  if (suspendedScrollRestoration === null) {
+    suspendedScrollRestoration = history.scrollRestoration;
+  }
+  history.scrollRestoration = "manual";
+}
+
+function resumeScrollRestoration() {
+  if (!("scrollRestoration" in history)) return;
+  if (suspendedScrollRestoration === null) return;
+  history.scrollRestoration = suspendedScrollRestoration;
+  suspendedScrollRestoration = null;
+}
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -41,6 +64,7 @@ export function ContactLink({
   return (
     <Link
       href="/#contact"
+      scroll={false}
       className={className}
       onClick={(e) => {
         e.preventDefault();
@@ -75,6 +99,14 @@ export function ContactDialog() {
   const sourceRef = useRef("lien-direct");
   /** true seulement si le pointeur a commencé sur le fond (évite de fermer après une sélection de texte). */
   const backdropPointerDownRef = useRef(false);
+  /** Position de la page au moment où l’on demande l’ouverture. */
+  const scrollSnapshotRef = useRef(0);
+  /** history.back() après le déverrouillage du scroll, pas pendant que le body est fixed. */
+  const pendingHistoryBackRef = useRef(false);
+  const lockEpochRef = useRef(0);
+  const scrollFrameRef = useRef(0);
+  const scrollTimerRef = useRef(0);
+  const openRef = useRef(false);
   const titleId = useId();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -85,6 +117,11 @@ export function ContactDialog() {
   const [errorMsg, setErrorMsg] = useState("");
   const privacyTitleId = useId();
   const confirmTitleId = useId();
+  openRef.current = open;
+
+  const rememberScroll = useCallback(() => {
+    scrollSnapshotRef.current = window.scrollY;
+  }, []);
 
   useEffect(() => {
     privacyOpenRef.current = privacyOpen;
@@ -95,7 +132,8 @@ export function ContactDialog() {
     const base = window.location.pathname + window.location.search;
     if (pushedRef.current) {
       pushedRef.current = false;
-      history.back();
+      // Différé : history.back() pendant le body fixed renvoie en bas de page.
+      pendingHistoryBackRef.current = true;
       return;
     }
     history.replaceState(null, "", base);
@@ -103,8 +141,11 @@ export function ContactDialog() {
 
   const ensureHash = useCallback(() => {
     if (window.location.hash === "#contact") return;
+    suspendScrollRestoration();
+    const scrollY = scrollSnapshotRef.current;
     const next = `${window.location.pathname}${window.location.search}#contact`;
     history.pushState(null, "", next);
+    restoreWindowScroll(scrollY);
     pushedRef.current = true;
   }, []);
 
@@ -113,9 +154,10 @@ export function ContactDialog() {
     setMinimized(false);
     setPrivacyOpen(false);
     setConfirmDismiss(false);
+    rememberScroll();
     ensureHash();
     setOpen(true);
-  }, [ensureHash]);
+  }, [ensureHash, rememberScroll]);
 
   const blurActiveField = useCallback(() => {
     const active = document.activeElement;
@@ -159,15 +201,18 @@ export function ContactDialog() {
       if (window.location.hash === "#contact") {
         sourceRef.current = "lien-direct";
         setMinimized(false);
+        rememberScroll();
         setOpen(true);
         return;
       }
-      setOpen(false);
+      pushedRef.current = false;
+      if (openRef.current) setOpen(false);
     };
     const onRequest = (event: Event) => {
       const detail = (event as CustomEvent<{ source?: string }>).detail;
       sourceRef.current = detail?.source?.trim() || "lien";
       setMinimized(false);
+      rememberScroll();
       ensureHash();
       setOpen(true);
     };
@@ -181,7 +226,7 @@ export function ContactDialog() {
       window.removeEventListener("hashchange", syncFromHash);
       window.removeEventListener("popstate", syncFromHash);
     };
-  }, [ensureHash]);
+  }, [ensureHash, rememberScroll]);
 
   useEffect(() => {
     if (window.location.hash === "#contact") return;
@@ -189,26 +234,64 @@ export function ContactDialog() {
   }, [pathname]);
 
   useEffect(() => {
-    const el = dialogRef.current;
-    if (!el) return;
-    if (open) {
-      closingRef.current = false;
-      if (!el.open) el.showModal();
-      // overflow sur tactile : évite le décalage des taps iOS après fermeture clavier
-      const coarse =
-        typeof window !== "undefined" &&
-        window.matchMedia("(pointer: coarse)").matches;
-      const unlock = lockBodyScroll({
-        strategy: coarse ? "overflow" : "fixed",
-      });
-      return unlock;
-    }
+    if (open) return;
     setPrivacyOpen(false);
     setConfirmDismiss(false);
-    if (el.open) {
-      closingRef.current = true;
-      el.close();
-    }
+  }, [open]);
+
+  useLayoutEffect(() => {
+    const el = dialogRef.current;
+    if (!el || !open) return;
+
+    closingRef.current = false;
+    cancelAnimationFrame(scrollFrameRef.current);
+    clearTimeout(scrollTimerRef.current);
+    const epoch = ++lockEpochRef.current;
+    const scrollY = scrollSnapshotRef.current;
+    const releaseSmooth = pinScrollBehavior();
+    suspendScrollRestoration();
+    // overflow sur tactile : évite le décalage des taps iOS après fermeture clavier
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const unlock = lockBodyScroll({
+      strategy: coarse ? "overflow" : "fixed",
+      scrollY,
+    });
+    // Body déjà figé : showModal ne peut plus envoyer la page en haut.
+    if (!el.open) el.showModal();
+    if (coarse) restoreWindowScroll(scrollY);
+
+    return () => {
+      if (el.open) {
+        closingRef.current = true;
+        el.close();
+      }
+      unlock();
+      restoreWindowScroll(scrollY);
+
+      if (
+        pendingHistoryBackRef.current &&
+        window.location.hash === "#contact"
+      ) {
+        pendingHistoryBackRef.current = false;
+        history.back();
+        restoreWindowScroll(scrollY);
+      } else {
+        pendingHistoryBackRef.current = false;
+      }
+
+      releaseSmooth();
+      const settle = () => {
+        if (epoch !== lockEpochRef.current) return;
+        restoreWindowScroll(scrollY);
+      };
+      scrollFrameRef.current = requestAnimationFrame(() => {
+        settle();
+        scrollTimerRef.current = window.setTimeout(() => {
+          settle();
+          if (epoch === lockEpochRef.current) resumeScrollRestoration();
+        }, 0);
+      });
+    };
   }, [open]);
 
   // Autofocus clavier désactivé sur tactile (sinon impossible de fermer / cocher après).
