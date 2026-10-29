@@ -24,6 +24,29 @@ import {
 const fieldClass =
   "w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground outline-none ring-foreground/10 placeholder:text-muted focus:ring-2 disabled:opacity-60";
 
+const TURNSTILE_SITE_KEY =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (
+        container: HTMLElement,
+        options: {
+          sitekey: string;
+          action?: string;
+          theme?: "light" | "dark" | "auto";
+          callback?: (token: string) => void;
+          "expired-callback"?: () => void;
+          "error-callback"?: () => void;
+        },
+      ) => string;
+      reset: (widgetId?: string) => void;
+      remove: (widgetId: string) => void;
+    };
+  }
+}
+
 const CONTACT_EVENT = "jv-open-contact";
 
 let suspendedScrollRestoration: ScrollRestoration | null = null;
@@ -109,6 +132,9 @@ export function ContactDialog() {
   const openRef = useRef(false);
   const titleId = useId();
   const pathname = usePathname();
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+  const tokenRef = useRef("");
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
@@ -314,10 +340,84 @@ export function ContactDialog() {
       ?.focus({ preventScroll: true });
   }, [open, privacyOpen]);
 
+  function resetTurnstile() {
+    tokenRef.current = "";
+    const id = widgetIdRef.current;
+    if (id && window.turnstile) window.turnstile.reset(id);
+  }
+
+  useEffect(() => {
+    if (!open || !TURNSTILE_SITE_KEY) return;
+    const container = turnstileRef.current;
+    if (!container) return;
+    let cancelled = false;
+    let script: HTMLScriptElement | null = null;
+
+    const renderWidget = () => {
+      if (cancelled || !turnstileRef.current || !window.turnstile) return;
+      if (widgetIdRef.current) return;
+      widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        action: "contact",
+        theme: "light",
+        callback: (token) => {
+          tokenRef.current = token;
+        },
+        "expired-callback": () => {
+          tokenRef.current = "";
+        },
+        "error-callback": () => {
+          tokenRef.current = "";
+        },
+      });
+    };
+
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      script = document.getElementById(
+        "cf-turnstile-api",
+      ) as HTMLScriptElement | null;
+      if (!script) {
+        script = document.createElement("script");
+        script.id = "cf-turnstile-api";
+        script.src =
+          "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+        script.async = true;
+        document.head.appendChild(script);
+      }
+      script.addEventListener("load", renderWidget);
+    }
+
+    return () => {
+      cancelled = true;
+      script?.removeEventListener("load", renderWidget);
+      const id = widgetIdRef.current;
+      if (id && window.turnstile) window.turnstile.remove(id);
+      widgetIdRef.current = null;
+      tokenRef.current = "";
+    };
+  }, [open]);
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
+
+    if (!TURNSTILE_SITE_KEY) {
+      setStatus("error");
+      setErrorMsg(
+        `La vérification anti-robot n’est pas configurée. Écrivez à ${SITE.email}.`,
+      );
+      return;
+    }
+    if (!tokenRef.current) {
+      setStatus("error");
+      setErrorMsg(
+        "La vérification anti-robot n’est pas encore prête. Patientez un instant, puis réessayez.",
+      );
+      return;
+    }
 
     setStatus("loading");
     setErrorMsg("");
@@ -334,6 +434,7 @@ export function ContactDialog() {
           privacy: data.get("privacy") === "on",
           website: data.get("website"),
           source: sourceRef.current,
+          turnstileToken: tokenRef.current,
         }),
       });
 
@@ -342,6 +443,7 @@ export function ContactDialog() {
       };
 
       if (!res.ok) {
+        resetTurnstile();
         setStatus("error");
         setErrorMsg(
           payload.error ||
@@ -352,7 +454,9 @@ export function ContactDialog() {
 
       setStatus("success");
       form.reset();
+      resetTurnstile();
     } catch {
+      resetTurnstile();
       setStatus("error");
       setErrorMsg(
         "Impossible d’envoyer le message. Vérifiez votre connexion ou utilisez l’email.",
@@ -635,6 +739,16 @@ export function ContactDialog() {
                   .
                 </p>
               </div>
+              <div className="flex justify-center">
+                {TURNSTILE_SITE_KEY ? (
+                  <div ref={turnstileRef} />
+                ) : (
+                  <p className="text-center text-sm text-accent-coral" role="status">
+                    La vérification anti-robot n’est pas configurée. Écrivez à{" "}
+                    {SITE.email}.
+                  </p>
+                )}
+              </div>
               <div className="flex justify-center pt-1">
                 <button
                   type="submit"
@@ -711,17 +825,23 @@ export function ContactDialog() {
                   <strong className="font-medium">Sous-traitants :</strong> les
                   messages du formulaire (nom, email, destination, message) sont
                   transmis à Resend, Inc. (États-Unis) pour l&apos;envoi de
-                  l&apos;email. Le site est hébergé par Vercel Inc.
-                  (États-Unis). Les articles du blog sont stockés chez Notion
-                  Labs, Inc. (États-Unis) ; cette base ne contient pas les
-                  messages du formulaire. Les boutons WhatsApp et Instagram
-                  ouvrent les pages correspondantes chez Meta : aucune donnée du
-                  formulaire n&apos;y est envoyée.
+                  l&apos;email. À l&apos;envoi, Cloudflare Turnstile vérifie
+                  qu&apos;il ne s&apos;agit pas d&apos;un robot : l&apos;adresse
+                  IP et des signaux techniques du navigateur peuvent être
+                  traités. Un compteur temporaire (empreinte de l&apos;adresse
+                  IP et de l&apos;email, sans le message) est enregistré chez
+                  Upstash pour limiter les envois répétés. Le site est hébergé
+                  par Vercel Inc. (États-Unis). Les articles du blog sont
+                  stockés chez Notion Labs, Inc. (États-Unis) ; cette base ne
+                  contient pas les messages du formulaire. Les boutons WhatsApp
+                  et Instagram ouvrent les pages correspondantes chez Meta :
+                  aucune donnée du formulaire n&apos;y est envoyée.
                 </p>
                 <p>
                   <strong className="font-medium">Cookies :</strong> ce site ne
                   dépose pas de cookie publicitaire ni de mesure
-                  d&apos;audience.
+                  d&apos;audience. La vérification anti-robot peut déposer un
+                  cookie technique.
                 </p>
               </div>
             </div>

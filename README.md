@@ -32,7 +32,13 @@ Voir `.env.example` :
 | `NEXT_PUBLIC_SITE_URL` | URL publique (SEO / sitemap) |
 | `RESEND_API_KEY` | Clé API Resend (formulaire contact) |
 | `CONTACT_TO_EMAIL` | Destinataire des messages |
-| `CONTACT_FROM_EMAIL` | Expéditeur Resend (domaine vérifié) |
+| `CONTACT_FROM_EMAIL` | Expéditeur sur `jennifervoyages.fr` (domaine vérifié dans Resend) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Clé site Cloudflare Turnstile (publique) |
+| `TURNSTILE_SECRET_KEY` | Clé secrète Turnstile (serveur uniquement) |
+| `TURNSTILE_ALLOWED_HOSTNAMES` | Noms d’hôte supplémentaires autorisés pour le jeton |
+| `KV_REST_API_URL` / `UPSTASH_REDIS_REST_URL` | URL Redis Upstash (l’intégration Vercel crée les noms `KV_*`) |
+| `KV_REST_API_TOKEN` / `UPSTASH_REDIS_REST_TOKEN` | Jeton Redis, serveur uniquement |
+| `CONTACT_RATE_LIMIT_SALT` | Sel optionnel des empreintes de limitation |
 | `REVALIDATE_SECRET` | Secret pour `POST /api/revalidate` (cache blog) |
 
 Vérifier Notion : `npm run check-notion`.
@@ -51,4 +57,5 @@ Vérifier Notion : `npm run check-notion`.
 | `npm run build` | Build production |
 | `npm run start` | Serveur production |
 | `npm run lint` | ESLint |
+| `npm test` | Tests du formulaire de contact |
 | `npm run check-notion` | Diagnostic connexion Notion |

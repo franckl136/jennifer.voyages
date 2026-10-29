@@ -1,114 +1,134 @@
-import { clientAddress, rateLimit } from "@/lib/rate-limit";
+import {
+  buildContactEmail,
+  DEFAULT_FROM,
+  isHoneypotFilled,
+  normalizeEmail,
+  parseContactFields,
+  parseFromAddress,
+} from "@/lib/contact-message";
+import {
+  limitContactEmail,
+  limitContactIp,
+  RateLimitUnavailableError,
+  trustedClientAddress,
+} from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const MAX_LEN = {
-  name: 120,
-  email: 254,
-  destination: 200,
-  message: 5000,
-} as const;
+const DIRECT_EMAIL = "contact@jennifervoyages.fr";
 
-function trimStr(value: unknown, max: number): string {
-  if (typeof value !== "string") return "";
-  return value.trim().slice(0, max);
+function jsonError(error: string, status: number, retryAfterSec?: number) {
+  return NextResponse.json(
+    { error },
+    {
+      status,
+      headers: retryAfterSec
+        ? { "Retry-After": String(retryAfterSec) }
+        : undefined,
+    },
+  );
 }
 
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function unavailable() {
+  return jsonError(
+    `L’envoi est temporairement indisponible. Réessayez plus tard, ou écrivez à ${DIRECT_EMAIL}.`,
+    503,
+  );
 }
 
 export async function POST(request: Request) {
-  let body: Record<string, unknown>;
+  let ipLimit: Awaited<ReturnType<typeof limitContactIp>>;
+  try {
+    ipLimit = await limitContactIp(request);
+  } catch (error) {
+    if (error instanceof RateLimitUnavailableError) {
+      console.error("[contact] Redis absent sur Vercel");
+    } else {
+      console.error("[contact] limitation", error);
+    }
+    return unavailable();
+  }
+  if (!ipLimit.ok) {
+    return jsonError(
+      `Trop de messages envoyés. Réessayez dans quelques minutes, ou écrivez à ${DIRECT_EMAIL}.`,
+      429,
+      ipLimit.retryAfterSec,
+    );
+  }
+
+  let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Requête invalide." }, { status: 400 });
+    return jsonError("Requête invalide.", 400);
   }
-
-  const limit = rateLimit(`contact:${clientAddress(request)}`);
-  if (!limit.ok) {
-    return NextResponse.json(
-      {
-        error:
-          "Trop de messages envoyés. Réessayez dans quelques minutes, ou écrivez à contact@jennifervoyages.fr.",
-      },
-      {
-        status: 429,
-        headers: { "Retry-After": String(limit.retryAfterSec) },
-      },
-    );
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return jsonError("Requête invalide.", 400);
   }
+  const record = body as Record<string, unknown>;
 
-  // Honeypot anti-bot (champ invisible)
-  if (trimStr(body.website, 200)) {
+  if (isHoneypotFilled(record.website)) {
     return NextResponse.json({ ok: true });
   }
 
-  const name = trimStr(body.name, MAX_LEN.name);
-  const email = trimStr(body.email, MAX_LEN.email);
-  const destination = trimStr(body.destination, MAX_LEN.destination);
-  const message = trimStr(body.message, MAX_LEN.message);
-  const source = trimStr(body.source, 80) || "inconnu";
-  const privacy = Boolean(body.privacy);
+  const parsed = parseContactFields(record);
+  if (!parsed.ok) return jsonError(parsed.error, 400);
 
-  if (!name || !email || !destination || !message || !privacy) {
-    return NextResponse.json(
-      { error: "Merci de remplir tous les champs obligatoires." },
-      { status: 400 },
+  const turnstile = await verifyTurnstile({
+    token: parsed.value.turnstileToken,
+    remoteIp: trustedClientAddress(request),
+  });
+  if (!turnstile.ok) {
+    return jsonError(
+      turnstile.status === 503
+        ? `La vérification anti-robot est momentanément indisponible. Réessayez dans un instant, ou écrivez à ${DIRECT_EMAIL}.`
+        : "La vérification anti-robot n’a pas abouti. Réessayez.",
+      turnstile.status,
     );
   }
 
-  if (!isValidEmail(email)) {
-    return NextResponse.json(
-      { error: "Adresse email invalide." },
-      { status: 400 },
+  let emailLimit: Awaited<ReturnType<typeof limitContactEmail>>;
+  try {
+    emailLimit = await limitContactEmail(parsed.value.email);
+  } catch (error) {
+    console.error("[contact] limitation email", error);
+    return unavailable();
+  }
+  if (!emailLimit.ok) {
+    return jsonError(
+      `Trop de messages envoyés. Réessayez dans quelques minutes, ou écrivez à ${DIRECT_EMAIL}.`,
+      429,
+      emailLimit.retryAfterSec,
     );
   }
 
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  const to =
-    process.env.CONTACT_TO_EMAIL?.trim() || "contact@jennifervoyages.fr";
-  const from =
-    process.env.CONTACT_FROM_EMAIL?.trim() ||
-    "Jennifer & Voyages <onboarding@resend.dev>";
-
-  if (!apiKey) {
-    console.error("[contact] RESEND_API_KEY manquant");
-    return NextResponse.json(
-      {
-        error:
-          "L’envoi n’est pas encore configuré. Écrivez-moi à contact@jennifervoyages.fr.",
-      },
-      { status: 503 },
-    );
+  const from = parseFromAddress(
+    process.env.CONTACT_FROM_EMAIL?.trim() || DEFAULT_FROM,
+  );
+  const to = normalizeEmail(process.env.CONTACT_TO_EMAIL?.trim() || DIRECT_EMAIL);
+  if (!apiKey || !from.ok || !to) {
+    console.error("[contact] expéditeur, destinataire ou clé Resend invalide");
+    return unavailable();
   }
 
+  const mail = buildContactEmail(parsed.value);
   const resend = new Resend(apiKey);
-  const subject = `[Contact] ${destination} — ${name}`;
-  const text = [
-    `Nom : ${name}`,
-    `Email : ${email}`,
-    `Destination : ${destination}`,
-    `Provenance : ${source}`,
-    "",
-    "Message :",
-    message,
-  ].join("\n");
-
   const { error } = await resend.emails.send({
-    from,
+    from: from.value,
     to: [to],
-    replyTo: email,
-    subject,
-    text,
+    replyTo: parsed.value.email,
+    subject: mail.subject,
+    text: mail.text,
+    html: mail.html,
   });
 
   if (error) {
     console.error("[contact] Resend:", error);
-    return NextResponse.json(
-      { error: "L’envoi a échoué. Réessayez ou utilisez l’email direct." },
-      { status: 502 },
+    return jsonError(
+      "L’envoi a échoué. Réessayez ou utilisez l’email direct.",
+      502,
     );
   }
 

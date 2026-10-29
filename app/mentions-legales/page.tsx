@@ -113,9 +113,14 @@ export default function MentionsLegalesPage() {
               <strong className="font-medium">Sous-traitants :</strong> les
               messages du formulaire (nom, email, destination, message) sont
               transmis à Resend, Inc. (États-Unis) pour l&apos;envoi de
-              l&apos;email. Le site est hébergé par Vercel Inc. (États-Unis).
-              Les articles du blog sont stockés chez Notion Labs, Inc.
-              (États-Unis) ; cette base ne contient pas les messages du
+              l&apos;email. À l&apos;envoi, Cloudflare Turnstile vérifie
+              qu&apos;il ne s&apos;agit pas d&apos;un robot : l&apos;adresse IP
+              et des signaux techniques du navigateur peuvent être traités. Un
+              compteur temporaire (empreinte de l&apos;adresse IP et de
+              l&apos;email, sans le message) est enregistré chez Upstash pour
+              limiter les envois répétés. Le site est hébergé par Vercel Inc.
+              (États-Unis). Les articles du blog sont stockés chez Notion Labs,
+              Inc. (États-Unis) ; cette base ne contient pas les messages du
               formulaire. Les boutons WhatsApp et Instagram ouvrent les pages
               correspondantes chez Meta : aucune donnée du formulaire n&apos;y
               est envoyée.
@@ -123,6 +128,7 @@ export default function MentionsLegalesPage() {
             <p>
               <strong className="font-medium">Cookies :</strong> ce site ne
               dépose pas de cookie publicitaire ni de mesure d&apos;audience.
+              La vérification anti-robot peut déposer un cookie technique.
             </p>
           </section>
 
