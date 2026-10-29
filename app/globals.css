@@ -70,9 +70,19 @@ main {
   margin: auto;
   height: fit-content;
   max-height: min(calc(100dvh - 2.5rem), 100%);
+  overflow-y: auto;
   color: var(--foreground);
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 640px) {
+  .contact-dialog {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: hidden;
+  }
 }
 
 /* iOS : pas de pastille / highlight autour de − et ✕ */

@@ -36,6 +36,8 @@ declare global {
           sitekey: string;
           action?: string;
           theme?: "light" | "dark" | "auto";
+          size?: "normal" | "compact" | "flexible";
+          appearance?: "always" | "execute" | "interaction-only";
           callback?: (token: string) => void;
           "expired-callback"?: () => void;
           "error-callback"?: () => void;
@@ -141,6 +143,7 @@ export function ContactDialog() {
   const [confirmDismiss, setConfirmDismiss] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [turnstilePassed, setTurnstilePassed] = useState(false);
   const privacyTitleId = useId();
   const confirmTitleId = useId();
   openRef.current = open;
@@ -342,6 +345,7 @@ export function ContactDialog() {
 
   function resetTurnstile() {
     tokenRef.current = "";
+    setTurnstilePassed(false);
     const id = widgetIdRef.current;
     if (id && window.turnstile) window.turnstile.reset(id);
   }
@@ -360,14 +364,19 @@ export function ContactDialog() {
         sitekey: TURNSTILE_SITE_KEY,
         action: "contact",
         theme: "light",
+        size: "flexible",
+        appearance: "interaction-only",
         callback: (token) => {
           tokenRef.current = token;
+          setTurnstilePassed(true);
         },
         "expired-callback": () => {
           tokenRef.current = "";
+          setTurnstilePassed(false);
         },
         "error-callback": () => {
           tokenRef.current = "";
+          setTurnstilePassed(false);
         },
       });
     };
@@ -396,6 +405,7 @@ export function ContactDialog() {
       if (id && window.turnstile) window.turnstile.remove(id);
       widgetIdRef.current = null;
       tokenRef.current = "";
+      setTurnstilePassed(false);
     };
   }, [open]);
 
@@ -469,7 +479,7 @@ export function ContactDialog() {
       <dialog
         ref={dialogRef}
         aria-labelledby={titleId}
-        className="contact-dialog w-[min(calc(100%-1.75rem),36rem)] overflow-y-auto rounded-2xl border border-border bg-card p-0 text-foreground shadow-2xl"
+        className="contact-dialog w-[min(calc(100%-1.75rem),36rem)] rounded-2xl border border-border bg-card p-0 text-foreground shadow-2xl"
         onClose={() => {
           setPrivacyOpen(false);
           setOpen(false);
@@ -534,7 +544,7 @@ export function ContactDialog() {
           </div>
         ) : null}
 
-        <div className="relative px-4 py-5 sm:px-8 sm:py-8">
+        <div className="relative px-4 py-5 sm:flex sm:min-h-0 sm:flex-1 sm:flex-col sm:overflow-y-auto sm:px-8 sm:pb-0 sm:pt-8">
           {confirmDismiss ? (
             <div
               className="absolute inset-0 z-20 flex items-center justify-center bg-card/95 px-5 py-6 backdrop-blur-[1px] sm:px-8"
@@ -574,7 +584,11 @@ export function ContactDialog() {
 
           {/* hidden+inert (pas unmount) : garde la saisie + formRef sur iOS/Android */}
           <div
-            className={privacyOpen ? "hidden" : undefined}
+            className={
+              privacyOpen
+                ? "hidden"
+                : "sm:flex sm:min-h-0 sm:flex-1 sm:flex-col"
+            }
             inert={privacyOpen || undefined}
           >
             <div className="mx-auto max-w-xl text-center">
@@ -622,8 +636,9 @@ export function ContactDialog() {
             <form
               ref={formRef}
               onSubmit={handleSubmit}
-              className="relative mx-auto mt-6 max-w-xl space-y-4"
+              className="relative mx-auto mt-6 max-w-xl sm:flex sm:min-h-0 sm:w-full sm:flex-1 sm:flex-col sm:overflow-hidden"
             >
+              <div className="space-y-4 sm:min-h-0 sm:flex-1 sm:overflow-y-auto sm:overscroll-contain sm:pb-2">
               <div className="sr-only" aria-hidden>
                 <label htmlFor="contact-website">Site web</label>
                 <input
@@ -739,26 +754,31 @@ export function ContactDialog() {
                   .
                 </p>
               </div>
-              <div className="flex justify-center">
-                {TURNSTILE_SITE_KEY ? (
-                  <div ref={turnstileRef} />
-                ) : (
-                  <p className="text-center text-sm text-accent-coral" role="status">
-                    La vérification anti-robot n’est pas configurée. Écrivez à{" "}
-                    {SITE.email}.
-                  </p>
-                )}
-              </div>
-              <div className="flex justify-center pt-1">
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-primary py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto sm:min-w-[16rem] sm:px-10"
+              {TURNSTILE_SITE_KEY ? (
+                <div
+                  hidden={turnstilePassed}
+                  className="flex justify-center"
                 >
-                  <Send className="h-4 w-4" aria-hidden />
-                  {status === "loading" ? "Envoi…" : "Envoyer le message"}
-                </button>
+                  <div ref={turnstileRef} className="max-w-full" />
+                </div>
+              ) : (
+                <p className="text-center text-sm text-accent-coral" role="status">
+                  La vérification anti-robot n’est pas configurée. Écrivez à{" "}
+                  {SITE.email}.
+                </p>
+              )}
               </div>
+              <div className="bg-card pt-4 sm:shrink-0 sm:pb-8 sm:pt-3">
+                <div className="flex justify-center">
+                  <button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-primary py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto sm:min-w-[16rem] sm:px-10"
+                  >
+                    <Send className="h-4 w-4" aria-hidden />
+                    {status === "loading" ? "Envoi…" : "Envoyer le message"}
+                  </button>
+                </div>
               {status === "success" ? (
                 <p className="text-center text-sm text-accent-mint" role="status">
                   Merci ! Votre message a bien été envoyé. Je vous réponds dès
@@ -770,6 +790,7 @@ export function ContactDialog() {
                   {errorMsg}
                 </p>
               ) : null}
+              </div>
             </form>
           </div>
 
