@@ -76,6 +76,58 @@ main {
   box-shadow: 0 0 0 2px var(--brand-primary) !important;
 }
 
+.contact-dialog :is(input, textarea)[aria-invalid="true"] {
+  border-color: var(--brand-primary) !important;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand-primary) 22%, transparent) !important;
+}
+
+.contact-dialog input.contact-privacy-check[aria-invalid="true"] {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* Petite bulle d’indication sous le champ */
+.contact-field-bubble {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px;
+  background: var(--brand-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.35;
+  box-shadow: 0 4px 14px color-mix(in oklab, var(--brand-primary) 28%, transparent);
+}
+
+.contact-field-bubble::before {
+  content: "";
+  position: absolute;
+  left: 1.1rem;
+  bottom: 100%;
+  border: 6px solid transparent;
+  border-bottom-color: var(--brand-primary);
+}
+
+.contact-field-bubble--footer {
+  display: block;
+  margin-top: 0;
+  text-align: center;
+  border-radius: 1rem;
+}
+
+.contact-field-bubble--footer::before {
+  display: none;
+}
+
+/* Couleur de coche unifiée (sinon Chrome = accent Windows, Firefox = bleu Mozilla) */
+.contact-dialog input.contact-privacy-check {
+  accent-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
 .contact-dialog input[type="checkbox"]:focus-visible {
   outline: 2px solid var(--brand-primary);
   outline-offset: 2px;

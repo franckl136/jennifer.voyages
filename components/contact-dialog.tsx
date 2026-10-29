@@ -2,6 +2,10 @@
 
 import { backLinkClass } from "@/lib/back-link";
 import {
+  ERR_LANGUAGE,
+  containsBlockedLanguage,
+} from "@/lib/contact-language";
+import {
   lockBodyScroll,
   pinScrollBehavior,
   restoreWindowScroll,
@@ -26,6 +30,88 @@ const fieldClass =
 
 const TURNSTILE_SITE_KEY =
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Messages FR (le navigateur affiche sinon sa langue UI, souvent l’anglais). */
+function validateContactForm(form: HTMLFormElement): {
+  message: string;
+  fieldId: string;
+} | null {
+  const name = form.elements.namedItem("name") as HTMLInputElement | null;
+  const email = form.elements.namedItem("email") as HTMLInputElement | null;
+  const destination = form.elements.namedItem(
+    "destination",
+  ) as HTMLInputElement | null;
+  const message = form.elements.namedItem("message") as HTMLTextAreaElement | null;
+  const privacy = form.elements.namedItem("privacy") as HTMLInputElement | null;
+
+  if (!name?.value.trim()) {
+    return { message: "Indiquez votre nom.", fieldId: "contact-name" };
+  }
+  const emailValue = email?.value.trim() ?? "";
+  if (!emailValue) {
+    return {
+      message: "Indiquez votre adresse email.",
+      fieldId: "contact-email",
+    };
+  }
+  if (!EMAIL_PATTERN.test(emailValue)) {
+    return {
+      message: "Indiquez une adresse email valide.",
+      fieldId: "contact-email",
+    };
+  }
+  if (!destination?.value.trim()) {
+    return {
+      message: "Indiquez la destination souhaitée.",
+      fieldId: "contact-destination",
+    };
+  }
+  if (!message?.value.trim()) {
+    return { message: "Écrivez votre message.", fieldId: "contact-message" };
+  }
+  if (containsBlockedLanguage(message?.value ?? "")) {
+    return { message: ERR_LANGUAGE, fieldId: "contact-message" };
+  }
+  if (containsBlockedLanguage(destination?.value ?? "")) {
+    return { message: ERR_LANGUAGE, fieldId: "contact-destination" };
+  }
+  if (containsBlockedLanguage(name?.value ?? "")) {
+    return { message: ERR_LANGUAGE, fieldId: "contact-name" };
+  }
+  if (!privacy?.checked) {
+    return {
+      message:
+        "Acceptez la politique de confidentialité pour envoyer le message.",
+      fieldId: "contact-privacy",
+    };
+  }
+  return null;
+}
+
+function clearContactInvalid(form: HTMLFormElement | null) {
+  form
+    ?.querySelectorAll<HTMLElement>("[aria-invalid='true']")
+    .forEach((el) => el.removeAttribute("aria-invalid"));
+}
+
+function FieldError({
+  fieldId,
+  activeId,
+  message,
+}: {
+  fieldId: string;
+  activeId: string | null;
+  message: string;
+}) {
+  if (activeId !== fieldId || !message) return null;
+  return (
+    <p id={`${fieldId}-error`} className="contact-field-bubble" role="alert">
+      {message}
+    </p>
+  );
+}
 
 declare global {
   interface Window {
@@ -137,12 +223,16 @@ export function ContactDialog() {
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const tokenRef = useRef("");
+  const privacyCheckRef = useRef<HTMLInputElement>(null);
+  /** Après un champ texte, le 1er tap tactile ferme le clavier : on coche dans le même geste. */
+  const privacyTouchArmRef = useRef(false);
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [confirmDismiss, setConfirmDismiss] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [invalidFieldId, setInvalidFieldId] = useState<string | null>(null);
   const [turnstilePassed, setTurnstilePassed] = useState(false);
   const privacyTitleId = useId();
   const confirmTitleId = useId();
@@ -266,6 +356,10 @@ export function ContactDialog() {
     if (open) return;
     setPrivacyOpen(false);
     setConfirmDismiss(false);
+    setInvalidFieldId(null);
+    setErrorMsg("");
+    setStatus((current) => (current === "error" ? "idle" : current));
+    clearContactInvalid(formRef.current);
   }, [open]);
 
   useLayoutEffect(() => {
@@ -323,9 +417,10 @@ export function ContactDialog() {
     };
   }, [open]);
 
-  // Autofocus clavier désactivé sur tactile (sinon impossible de fermer / cocher après).
+  // Autofocus à l’ouverture seulement (pas au retour de la politique :
+  // sinon scroll en haut + focus Nom, et la case paraît « lente »).
   useEffect(() => {
-    if (!open || privacyOpen) return;
+    if (!open) return;
     const el = dialogRef.current;
     if (!el?.open) return;
     el.scrollTop = 0;
@@ -334,12 +429,25 @@ export function ContactDialog() {
     el.querySelector<HTMLInputElement>("#contact-name")?.focus({
       preventScroll: true,
     });
-  }, [open, privacyOpen]);
+  }, [open]);
 
   useEffect(() => {
     if (!open || !privacyOpen) return;
     dialogRef.current
       ?.querySelector<HTMLButtonElement>("#contact-privacy-back")
+      ?.focus({ preventScroll: true });
+  }, [open, privacyOpen]);
+
+  // Retour de la politique : focus sur la case, sans remonter le formulaire.
+  const wasPrivacyOpenRef = useRef(false);
+  useEffect(() => {
+    const wasOpen = wasPrivacyOpenRef.current;
+    wasPrivacyOpenRef.current = privacyOpen;
+    if (!open || privacyOpen || !wasOpen) return;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    if (coarse) return;
+    dialogRef.current
+      ?.querySelector<HTMLInputElement>("#contact-privacy")
       ?.focus({ preventScroll: true });
   }, [open, privacyOpen]);
 
@@ -409,10 +517,33 @@ export function ContactDialog() {
     };
   }, [open]);
 
+  const clearClientValidation = useCallback(() => {
+    clearContactInvalid(formRef.current);
+    setInvalidFieldId(null);
+    setErrorMsg("");
+    setStatus((current) => (current === "error" ? "idle" : current));
+  }, []);
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
+
+    clearContactInvalid(form);
+    setInvalidFieldId(null);
+    const invalid = validateContactForm(form);
+    if (invalid) {
+      const field = form.querySelector<HTMLElement>(`#${invalid.fieldId}`);
+      field?.setAttribute("aria-invalid", "true");
+      setInvalidFieldId(invalid.fieldId);
+      setStatus("error");
+      setErrorMsg(invalid.message);
+      requestAnimationFrame(() => {
+        field?.focus({ preventScroll: true });
+        field?.scrollIntoView({ block: "center", behavior: "smooth" });
+      });
+      return;
+    }
 
     if (!TURNSTILE_SITE_KEY) {
       setStatus("error");
@@ -431,6 +562,7 @@ export function ContactDialog() {
 
     setStatus("loading");
     setErrorMsg("");
+    setInvalidFieldId(null);
 
     try {
       const res = await fetch("/api/contact", {
@@ -635,7 +767,10 @@ export function ContactDialog() {
 
             <form
               ref={formRef}
+              noValidate
               onSubmit={handleSubmit}
+              onInput={clearClientValidation}
+              onChange={clearClientValidation}
               className="relative mx-auto mt-6 max-w-xl sm:flex sm:min-h-0 sm:w-full sm:flex-1 sm:flex-col sm:overflow-hidden"
             >
               <div className="space-y-4 p-1.5 sm:min-h-0 sm:flex-1 sm:overflow-y-auto sm:overscroll-contain sm:pb-2">
@@ -667,6 +802,16 @@ export function ContactDialog() {
                   disabled={status === "loading"}
                   className={fieldClass}
                   placeholder="Votre nom"
+                  aria-describedby={
+                    invalidFieldId === "contact-name"
+                      ? "contact-name-error"
+                      : undefined
+                  }
+                />
+                <FieldError
+                  fieldId="contact-name"
+                  activeId={invalidFieldId}
+                  message={errorMsg}
                 />
               </div>
               <div>
@@ -686,6 +831,16 @@ export function ContactDialog() {
                   disabled={status === "loading"}
                   className={fieldClass}
                   placeholder="vous@exemple.com"
+                  aria-describedby={
+                    invalidFieldId === "contact-email"
+                      ? "contact-email-error"
+                      : undefined
+                  }
+                />
+                <FieldError
+                  fieldId="contact-email"
+                  activeId={invalidFieldId}
+                  message={errorMsg}
                 />
               </div>
               <div>
@@ -704,6 +859,16 @@ export function ContactDialog() {
                   disabled={status === "loading"}
                   className={fieldClass}
                   placeholder="Portugal, Japon, route aux États-Unis…"
+                  aria-describedby={
+                    invalidFieldId === "contact-destination"
+                      ? "contact-destination-error"
+                      : undefined
+                  }
+                />
+                <FieldError
+                  fieldId="contact-destination"
+                  activeId={invalidFieldId}
+                  message={errorMsg}
                 />
               </div>
               <div>
@@ -722,42 +887,105 @@ export function ContactDialog() {
                   disabled={status === "loading"}
                   className={`${fieldClass} resize-y`}
                   placeholder="Dates envisagées, nombre de voyageurs, budget, envies…"
+                  aria-describedby={
+                    invalidFieldId === "contact-message"
+                      ? "contact-message-error"
+                      : undefined
+                  }
+                />
+                <FieldError
+                  fieldId="contact-message"
+                  activeId={invalidFieldId}
+                  message={errorMsg}
                 />
               </div>
-              <div className="relative z-10 flex items-center gap-3 pt-2 text-left text-sm leading-relaxed text-foreground">
+              <div>
+              <label
+                htmlFor="contact-privacy"
+                className="relative z-10 flex cursor-pointer items-center gap-3 pt-2 text-left text-sm leading-relaxed text-foreground touch-manipulation"
+                onPointerDown={(e) => {
+                  if ((e.target as HTMLElement).closest("button")) return;
+                  if (e.pointerType !== "touch" && e.pointerType !== "pen") {
+                    return;
+                  }
+                  const active = document.activeElement;
+                  const fromField =
+                    active instanceof HTMLTextAreaElement ||
+                    (active instanceof HTMLInputElement &&
+                      active.type !== "checkbox" &&
+                      active.type !== "hidden");
+                  if (fromField && active !== privacyCheckRef.current) {
+                    privacyTouchArmRef.current = true;
+                    active.blur();
+                  }
+                }}
+                onPointerUp={(e) => {
+                  if (!privacyTouchArmRef.current) return;
+                  if ((e.target as HTMLElement).closest("button")) {
+                    privacyTouchArmRef.current = false;
+                    return;
+                  }
+                  privacyTouchArmRef.current = false;
+                  e.preventDefault();
+                  const input = privacyCheckRef.current;
+                  if (!input || input.disabled) return;
+                  input.checked = !input.checked;
+                  input.dispatchEvent(new Event("change", { bubbles: true }));
+                }}
+              >
                 <input
+                  ref={privacyCheckRef}
                   id="contact-privacy"
                   name="privacy"
                   type="checkbox"
                   required
                   disabled={status === "loading"}
-                  className="h-5 w-5 shrink-0 touch-manipulation rounded border-border text-brand-primary focus:ring-brand-primary disabled:opacity-60"
+                  className="contact-privacy-check h-5 w-5 shrink-0 rounded border-border disabled:opacity-60"
+                  aria-describedby={
+                    invalidFieldId === "contact-privacy"
+                      ? "contact-privacy-error"
+                      : undefined
+                  }
+                  onMouseDown={(e) => {
+                    const active = document.activeElement;
+                    const fromField =
+                      active instanceof HTMLTextAreaElement ||
+                      (active instanceof HTMLInputElement &&
+                        active.type !== "checkbox" &&
+                        active.type !== "hidden");
+                    // Si un champ a le focus, empêche le blur de « manger » ce clic.
+                    if (fromField) e.preventDefault();
+                  }}
                 />
-                <p className="min-w-0 flex-1">
-                  <label
-                    htmlFor="contact-privacy"
-                    className="cursor-pointer touch-manipulation"
-                  >
-                    J&apos;accepte que mes données soient traitées conformément
-                    à la{" "}
-                  </label>
+                <span className="min-w-0 flex-1">
+                  J&apos;accepte que mes données soient traitées conformément à
+                  la{" "}
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       blurActiveField();
                       setPrivacyOpen(true);
                     }}
+                    onMouseDown={(e) => e.stopPropagation()}
                     className="touch-manipulation font-medium text-brand-primary underline underline-offset-2 hover:opacity-90"
                   >
                     politique de confidentialité
                   </button>
                   .
-                </p>
+                </span>
+              </label>
+              <FieldError
+                fieldId="contact-privacy"
+                activeId={invalidFieldId}
+                message={errorMsg}
+              />
               </div>
               {TURNSTILE_SITE_KEY ? (
                 <div
                   hidden={turnstilePassed}
-                  className="flex justify-center"
+                  className="relative z-0 flex justify-center overflow-hidden"
                 >
                   <div ref={turnstileRef} className="max-w-full" />
                 </div>
@@ -769,6 +997,23 @@ export function ContactDialog() {
               )}
               </div>
               <div className="bg-card pt-4 sm:shrink-0 sm:pb-8 sm:pt-3">
+                {status === "error" && !invalidFieldId ? (
+                  <p
+                    className="contact-field-bubble contact-field-bubble--footer mb-3"
+                    role="alert"
+                  >
+                    {errorMsg}
+                  </p>
+                ) : null}
+                {status === "success" ? (
+                  <p
+                    className="mb-3 text-center text-sm font-medium text-accent-mint"
+                    role="status"
+                  >
+                    Merci ! Votre message a bien été envoyé. Je vous réponds dès
+                    que possible.
+                  </p>
+                ) : null}
                 <div className="flex justify-center">
                   <button
                     type="submit"
@@ -779,17 +1024,6 @@ export function ContactDialog() {
                     {status === "loading" ? "Envoi…" : "Envoyer le message"}
                   </button>
                 </div>
-              {status === "success" ? (
-                <p className="text-center text-sm text-accent-mint" role="status">
-                  Merci ! Votre message a bien été envoyé. Je vous réponds dès
-                  que possible.
-                </p>
-              ) : null}
-              {status === "error" ? (
-                <p className="text-center text-sm text-accent-coral" role="alert">
-                  {errorMsg}
-                </p>
-              ) : null}
               </div>
             </form>
           </div>

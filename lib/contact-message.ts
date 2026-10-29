@@ -1,3 +1,8 @@
+import {
+  ERR_LANGUAGE,
+  containsBlockedLanguage,
+} from "@/lib/contact-language";
+
 /** Limites alignées sur les attributs maxLength du formulaire. */
 export const CONTACT_FIELD_MAX = {
   name: 120,
@@ -158,6 +163,12 @@ export function parseContactFields(
 
   const email = normalizeEmail(emailRaw.value);
   if (!email) return { ok: false, error: ERR_EMAIL };
+
+  if (
+    containsBlockedLanguage(name.value, destination.value, message.value)
+  ) {
+    return { ok: false, error: ERR_LANGUAGE };
+  }
 
   const sourceRaw = typeof body.source === "string" ? body.source.trim() : "";
   const source = SOURCE_RE.test(sourceRaw) ? sourceRaw : "inconnu";
