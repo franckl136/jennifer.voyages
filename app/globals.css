@@ -64,6 +64,23 @@ main {
   outline-offset: 3px;
 }
 
+/*
+ * outline ne suit pas toujours border-radius (coins « coupés »).
+ * Anneau via box-shadow + padding sur la zone scroll (contact-dialog).
+ * !important : passe devant les utilitaires Tailwind (border/ring/outline).
+ */
+.contact-dialog :is(input:not([type="checkbox"]):not([type="hidden"]), textarea, select):focus,
+.contact-dialog :is(input:not([type="checkbox"]):not([type="hidden"]), textarea, select):focus-visible {
+  border-color: var(--brand-primary) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--brand-primary) !important;
+}
+
+.contact-dialog input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
 .contact-dialog {
   position: fixed;
   inset: 0;
@@ -76,8 +93,9 @@ main {
   -webkit-overflow-scrolling: touch;
 }
 
+/* [open] obligatoire : un display sans ça laisse le dialog visible hors couche modale */
 @media (min-width: 640px) {
-  .contact-dialog {
+  .contact-dialog[open] {
     display: flex;
     flex-direction: column;
     height: auto;

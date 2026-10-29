@@ -22,7 +22,7 @@ import {
 } from "react";
 
 const fieldClass =
-  "w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground outline-none ring-foreground/10 placeholder:text-muted focus:ring-2 disabled:opacity-60";
+  "w-full min-h-12 rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground outline-none placeholder:text-muted disabled:opacity-60";
 
 const TURNSTILE_SITE_KEY =
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
@@ -638,7 +638,7 @@ export function ContactDialog() {
               onSubmit={handleSubmit}
               className="relative mx-auto mt-6 max-w-xl sm:flex sm:min-h-0 sm:w-full sm:flex-1 sm:flex-col sm:overflow-hidden"
             >
-              <div className="space-y-4 sm:min-h-0 sm:flex-1 sm:overflow-y-auto sm:overscroll-contain sm:pb-2">
+              <div className="space-y-4 p-1.5 sm:min-h-0 sm:flex-1 sm:overflow-y-auto sm:overscroll-contain sm:pb-2">
               <div className="sr-only" aria-hidden>
                 <label htmlFor="contact-website">Site web</label>
                 <input
@@ -724,16 +724,16 @@ export function ContactDialog() {
                   placeholder="Dates envisagées, nombre de voyageurs, budget, envies…"
                 />
               </div>
-              <div className="relative z-10 flex items-start gap-3 pt-2 text-left text-sm leading-relaxed text-foreground">
+              <div className="relative z-10 flex items-center gap-3 pt-2 text-left text-sm leading-relaxed text-foreground">
                 <input
                   id="contact-privacy"
                   name="privacy"
                   type="checkbox"
                   required
                   disabled={status === "loading"}
-                  className="mt-1 h-6 w-6 shrink-0 touch-manipulation rounded border-border text-brand-primary focus:ring-brand-primary disabled:opacity-60"
+                  className="h-5 w-5 shrink-0 touch-manipulation rounded border-border text-brand-primary focus:ring-brand-primary disabled:opacity-60"
                 />
-                <p className="min-w-0 flex-1 pt-0.5">
+                <p className="min-w-0 flex-1">
                   <label
                     htmlFor="contact-privacy"
                     className="cursor-pointer touch-manipulation"
