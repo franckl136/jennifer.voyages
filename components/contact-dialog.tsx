@@ -676,7 +676,7 @@ export function ContactDialog() {
           </div>
         ) : null}
 
-        <div className="relative px-4 py-5 sm:flex sm:min-h-0 sm:flex-1 sm:flex-col sm:overflow-y-auto sm:px-8 sm:pb-0 sm:pt-8">
+        <div className="relative px-4 py-5 sm:px-8 sm:pb-6 sm:pt-6">
           {confirmDismiss ? (
             <div
               className="absolute inset-0 z-20 flex items-center justify-center bg-card/95 px-5 py-6 backdrop-blur-[1px] sm:px-8"
@@ -716,11 +716,7 @@ export function ContactDialog() {
 
           {/* hidden+inert (pas unmount) : garde la saisie + formRef sur iOS/Android */}
           <div
-            className={
-              privacyOpen
-                ? "hidden"
-                : "sm:flex sm:min-h-0 sm:flex-1 sm:flex-col"
-            }
+            className={privacyOpen ? "hidden" : undefined}
             inert={privacyOpen || undefined}
           >
             <div className="mx-auto max-w-xl text-center">
@@ -771,9 +767,9 @@ export function ContactDialog() {
               onSubmit={handleSubmit}
               onInput={clearClientValidation}
               onChange={clearClientValidation}
-              className="relative mx-auto mt-6 max-w-xl sm:flex sm:min-h-0 sm:w-full sm:flex-1 sm:flex-col sm:overflow-hidden"
+              className="relative mx-auto mt-5 max-w-xl"
             >
-              <div className="space-y-4 p-1.5 sm:min-h-0 sm:flex-1 sm:overflow-y-auto sm:overscroll-contain sm:pb-2">
+              <div className="space-y-3 p-1.5">
               <div className="sr-only" aria-hidden>
                 <label htmlFor="contact-website">Site web</label>
                 <input
@@ -882,7 +878,7 @@ export function ContactDialog() {
                   id="contact-message"
                   name="message"
                   required
-                  rows={4}
+                  rows={3}
                   maxLength={5000}
                   disabled={status === "loading"}
                   className={`${fieldClass} resize-y`}
@@ -996,7 +992,7 @@ export function ContactDialog() {
                 </p>
               )}
               </div>
-              <div className="bg-card pt-4 sm:shrink-0 sm:pb-8 sm:pt-3">
+              <div className="bg-card pt-3 sm:pb-1 sm:pt-2">
                 {status === "error" && !invalidFieldId ? (
                   <p
                     className="contact-field-bubble contact-field-bubble--footer mb-3"

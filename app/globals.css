@@ -145,13 +145,12 @@ main {
   -webkit-overflow-scrolling: touch;
 }
 
-/* [open] obligatoire : un display sans ça laisse le dialog visible hors couche modale */
+/* Desktop : hauteur au contenu. Un seul scroll sur le dialog si l’écran est bas. */
 @media (min-width: 640px) {
   .contact-dialog[open] {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    overflow: hidden;
+    height: fit-content;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }
 
